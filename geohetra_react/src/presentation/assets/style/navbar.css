@@ -1,0 +1,180 @@
+
+.Toastify__toast--success {
+  background-color: green !important;
+  color: white !important;
+}
+
+/* Styles pour les notifications d'erreur */
+.Toastify__toast--error {
+  background-color: red !important;
+  color: white !important;
+}
+
+.navbar-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .navigation{
+    background-color: #3b3b3b;
+  }
+  
+  .navbar{
+    background-color: #3b3b3b;
+    color: white;
+    position: sticky !important;
+    width : 100%;
+    font-size: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 80px;
+    top: 0px;
+    z-index: 50;
+  }
+  
+  .navigation{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+  
+  .logo{
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-name{
+    font-size: 25px;
+    font-weight: bold;
+  }
+  
+  .logo-name span{
+    color: #29ad4c !important;
+  }
+  .logo-icon{
+    width: 50px;
+    height: 50px;
+  }
+  
+  .titre{
+    margin-right: 10px;
+  }
+  
+  nav ul{
+    float: right;
+    list-style: none;
+    margin-right: 40px;
+    position: relative;
+  }
+  
+  .show-menu{
+    display: inline-block !important;
+    transition: ease-in-out .5s all;
+  }
+  
+  @media (max-width : 1024px){
+    nav ul{
+      display: none;
+    }
+  
+    .navigation{
+      z-index: 9999;
+      position: absolute;
+      width: 100%;
+      left: 0;
+    }
+    nav ul li{
+      width: 100% !important;
+      text-align: center;
+      border-bottom: none;
+    }
+  
+    nav ul li a{
+      border-bottom: none !important; 
+    }
+  
+    .logout-small{
+      display: none !important;
+    }
+    .logout-wide{
+      display: block !important;
+    }
+  
+    .toggle{
+      display: block;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+    }
+  
+  }
+  
+  @media (min-width : 1025px){
+    .toggle{
+      display: none
+    }
+    
+    .logout-wide{
+      display: none !important;
+    }
+  }
+  
+  nav ul li{
+    margin: 0 5px;
+    height: 5px;
+    display: inline-block;
+  }
+  
+  nav ul li a{
+    color: white;
+    position: relative;
+    text-decoration: none;
+    line-height: 70px;
+    font-size: 15px;
+    padding-top: 8px;
+    padding-left : 15px;
+    padding-right: 15px;
+    padding-bottom: 25px;
+  }
+  
+  .active{
+    color: #71f490;
+    font-weight: bolder;
+    border-bottom: 2px solid #71f490;
+  }
+  
+  nav ul li a:hover{
+    color: #71f490;
+    transition: 0.3s;
+  }
+  
+  nav ul li a::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    left: 0;
+    bottom: 0;
+    background: #71f490;
+  }
+  
+  
+  nav ul li a::after{
+    transform: scale(0,1);
+    transition: transform 0.3s ease;
+  }
+  
+  
+  nav ul li a:hover::after{
+    transform: scale(1,1);
+  }
+  
+  .toggle{
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .active{
+    font-weight: bolder;
+  }

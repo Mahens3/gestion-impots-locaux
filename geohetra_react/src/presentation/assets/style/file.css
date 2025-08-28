@@ -1,0 +1,33 @@
+
+.drag-area{
+    border: 3px dashed #e9ecef ;
+    height: 90%;
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 10px auto;
+  }
+  
+  .drag-area .icon {
+    font-size: 50px;
+    color: #17f051ed;
+  }
+  
+  .drag-area .drag-text{
+    font-size: 20px;
+    font-weight: 500px;
+    color: #345e3e;
+  }
+  .drag-area .support{
+    font-size: 12px;
+    color : gray;
+    margin: 10px 0 15px 0;
+  }
+  
+  .drag-area .btn-import{
+    font-size: 20px;
+    font-weight: 500px;
+    color: #345e3e
+  }

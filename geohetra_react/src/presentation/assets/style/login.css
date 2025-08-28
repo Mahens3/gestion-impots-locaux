@@ -1,0 +1,119 @@
+.login {
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #b0ffff;
+}
+
+.login-content {
+    color: white;
+    width: 300px;
+    height: 350px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+}
+
+.label-login{
+    font-weight: bolder;
+}
+
+
+.login-footer{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.login-header{
+    padding: 15px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 27px;
+}
+
+.error{
+    color: red;
+}
+
+.login-header span{
+    color: #29ad4c;
+}
+
+.btn-login{
+    text-align: center;
+    background-color: #29ad4c;
+    padding: 9px 20px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-login:hover{
+    background-color: #187531;
+}
+
+
+.label-login i{
+    font-weight: bolder;
+    color: #83b899;
+    margin-right: 10px;
+}
+
+.login-body{
+    margin: 10px 20px;
+}
+
+.input-login {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555555;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.input-login:focus {
+    border-color: #33c55a;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(17, 229, 52, 0.6);
+}
+
+.input-login::-moz-placeholder {
+    color: #999999;
+    opacity: 1;
+}
+
+.input-login:-ms-input-placeholder {
+    color: #999999;
+}
+
+.input-login::-webkit-input-placeholder {
+    color: #999999;
+}
+
+.input-login::-ms-expand {
+    background-color: transparent;
+    border: 0;
+}
+
+.input-login[disabled],
+.input-login[readonly],
+fieldset[disabled] .input-login {
+    background-color: #eeeeee;
+    opacity: 1;
+}

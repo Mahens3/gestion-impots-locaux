@@ -1,0 +1,55 @@
+name: geohetra
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.5+2
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+
+dependencies:
+  flutter_localizations:
+    sdk: flutter
+
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  sqflite: ^2.0.2
+  overlay_support: ^2.0.1
+  geolocator : ^8.0.0
+  http: ^0.13.4
+  image_picker: ^0.8.5+3
+  intl : ^0.18.0
+  flutter_map : any
+  flutter_map_marker_cluster: ^0.5.4
+  path_provider: ^2.0.11
+  file_manager: ^1.0.1
+  simple_animations: ^5.0.0+3
+  syncfusion_flutter_xlsio: ^20.4.48-beta
+  permission_handler: ^9.2.0
+  fbroadcast: ^2.0.0
+  connectivity_plus: ^5.0.2
+
+flutter_icons :
+  image_path : "assets/logo.png"
+  android : true
+  ios : true
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  flutter_lints: ^1.0.0
+  flutter_launcher_icons: ^0.9.0
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+      - assets/
+

@@ -1,0 +1,19 @@
+
+.content-image{
+    display: flex;
+  }
+  .images{
+    display: block;
+  }
+  .image{
+    margin: 0px;
+    padding: 0px;
+    height: 100px;
+  }
+  
+  .image img{
+    height: 100%;
+    width: 100%;
+    
+  }
+  

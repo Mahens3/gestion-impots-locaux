@@ -1,0 +1,75 @@
+
+.page{
+    box-shadow: 0 0 5px rgba(159, 159, 159, 0.3);
+    background-color: white;
+    padding: 0px;
+    font-size: 10px;
+    margin-bottom: 40px;
+    page-break-after: always;
+}
+
+.avis-content{
+    margin-bottom: 0px;
+}
+
+.avis{
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-end;
+}
+
+.flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-center{
+    display: flex;
+    justify-content: center;
+}
+
+.flex-end{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.bordered-top{
+    border-top: 1px dashed black;
+}
+
+.padded{
+    padding: 2px 5px;
+}
+
+.hcontent, .center{
+    text-align: center;
+}
+.bold{
+    font-weight: bolder; 
+    font-size: 10px;
+}
+.tarigetra{
+    font-size: 10px;
+}
+
+.underline{
+    border-bottom: 1px solid black;
+}
+
+.header-text{
+    font-size: 10px;
+}
+
+.table-avis{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-avis td{
+    border: 1px dashed black;
+}
+.table-avis th {
+    border: 1px dashed black !important;
+}

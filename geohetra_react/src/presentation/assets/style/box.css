@@ -1,0 +1,123 @@
+
+
+@media (min-width : 1146px) {
+    .box-cards {
+        margin-right: -20px;
+        margin-left: 10px;
+        margin-bottom: 15px;
+        width: 100%;
+        display: flex;
+    }
+}
+
+@media (max-width : 1140px) {
+    .box-cards {
+        display: inline;
+    }
+    .box-cards-item{
+        margin-bottom: 20px !important;
+    }
+
+    .col-md-4{
+        padding-right: 0px !important;
+    }
+}
+
+
+
+.box-cards>div {
+    @media (min-width : 1146px) {
+        padding-left: 13px;
+        padding-right: 35px;
+    }
+
+    @media (max-width : 1146px) {
+        padding: 10px 10px;
+    }
+}
+
+.box-cards-icon,
+.box-cards-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap
+}
+
+.box-cards-item {
+    padding: 24px 19px;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0 15px 50px rgba(160, 163, 189, .1);
+    box-shadow: 0 15px 50px rgba(160, 163, 189, .1);
+    border-radius: 10px;
+    margin: 0;
+    height: 100%
+}
+
+.box-cards-icon {
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 9px
+}
+
+.box-cards-icon.primary {
+    background-color: rgba(164, 181, 17, 0.1);
+    color: #929551
+}
+
+.box-cards-icon.purple {
+    background-color: rgba(95, 46, 234, .1);
+    color: #5f2eea
+}
+
+.box-cards-icon.succes {
+    background-color: rgba(75, 222, 151, .1);
+    color: #4bde97
+}
+
+.box-cards-info__num {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.22;
+    color: #171717;
+    margin-bottom: 4px
+}
+
+.box-cards-info__title {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.22;
+    color: #3d3d3d;
+    margin-bottom: 6px
+}
+
+.box-cards-info__profit,
+.box-cards-info__progress {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.22
+}
+
+.box-cards-info__progress {
+    color: #b9b9b9
+}
+
+.box-cards-info__profit {
+    margin-right: 10px
+}
+
+.box-cards-info__profit.success {
+    color: #4bde97
+}
+
+.box-cards-info__profit svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px
+}

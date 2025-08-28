@@ -1,0 +1,21 @@
+
+.leaflet-container{
+    position: absolute !important;
+    z-index: 996;
+     /**
+    width: 100vw !important;
+    height: 100%;
+    */
+    width: calc(100% - 280px);
+    height:  calc(100vh - 68px);
+   
+}
+
+.leaflet-control-attribution {
+    display: none !important;
+  }
+@media (max-width : 1024px) {
+    .leaflet-container{
+        width: 100%;
+    }
+}
