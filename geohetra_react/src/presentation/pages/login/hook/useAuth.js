@@ -11,11 +11,11 @@ function useAuth(data, helpers) {
         setIsLoading(true)
         await LoginService.post(data)
             .then((response) => {
-                if (response.email == false) {
+                if (response.email === false) {
                     helpers.setErrors({ submit: "Utilisateur inéxistant" });
                 }
                 else {
-                    if (response.password == false) {
+                    if (response.password === false) {
                         helpers.setErrors({ submit: "Mot de passe incorrect" });
                     }
                     else {

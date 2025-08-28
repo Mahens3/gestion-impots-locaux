@@ -107,7 +107,7 @@ const SideNav = (props) => {
             variant="contained"
             color='success'
             onClick={() => {
-              navigate("/map")
+              navigate("/admin/map")
             }}
           >
             Carte

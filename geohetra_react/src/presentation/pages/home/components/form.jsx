@@ -127,7 +127,7 @@ const Form = ({ currentPage, isLoading, handleSearch}) => {
                                     onChange={(e) => { setSelectedFkt(e.target.value) }}
                                 >
                                     {
-                                        fokontany.map((value) => (
+                                        fokontany?.map((value) => (
                                             <option value={value.id}>
                                                 {value.nomfokontany}
                                             </option>

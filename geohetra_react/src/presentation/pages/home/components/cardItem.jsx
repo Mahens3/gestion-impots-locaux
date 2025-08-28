@@ -18,7 +18,7 @@ const CardItem = ({ data }) => {
                 cursor: "pointer",
             }}
         >
-            {imageLoading == true && (
+            {imageLoading === true && (
                 <Box
                     display="flex"
                     alignItems="center"
@@ -48,7 +48,7 @@ const CardItem = ({ data }) => {
                     justifyContent="flex-start"
                 >
                     <Person sx={{
-                        backgroundColor: data.reste == 0 ? "green" : "#fff",
+                        backgroundColor: data.reste === 0 ? "green" : "#fff",
                         width: "25px",
                         color: "#BBBBBB",
                         mr: 1,
@@ -73,7 +73,7 @@ const CardItem = ({ data }) => {
                         }}
                     >{data.surface} m² ({data.niveau} niv)</Typography>
                     {
-                        localStorage.getItem("mode") == "gestion" &&
+                        localStorage.getItem("mode") === "gestion" &&
                         <Typography
                             sx={{
                                 fontSize: "0.8rem"

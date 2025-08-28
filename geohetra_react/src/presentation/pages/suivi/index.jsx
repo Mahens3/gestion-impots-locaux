@@ -12,10 +12,10 @@ const Suivi = () => {
     }
 
     const nomfokontany = useMemo(() => {
-        const value = fokontany.filter((value) => value.id == selectedFkt)
-        return value[0]!=undefined ? value[0].nomfokontany : ""
+        const value = fokontany.filter((value) => value.id === selectedFkt)
+        return value[0] !== undefined ? value[0].nomfokontany : ""
 
-    }, [selectedFkt])
+    }, [selectedFkt, fokontany])
 
     return (
         <div>
@@ -52,7 +52,7 @@ const Suivi = () => {
 
                 <div>
                     {
-                        (fokontany.length == 0 && isLoading) ? <Spinner /> :
+                        (fokontany.length === 0 && isLoading) ? <Spinner /> :
 
                             <table className='table-primary'>
                                 <thead>

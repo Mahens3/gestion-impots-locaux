@@ -1,5 +1,5 @@
 import axios from "data/api/axios"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 function useSuivi() {
     const [isLoading, setIsLoading] = useState(true)
@@ -10,18 +10,18 @@ function useSuivi() {
         "constructions": []
     })
 
-    const fetch = async () => {
+    const fetch = useCallback(async () => {
         setIsLoading(true)
         await axios.get(`/api/construction/perfkt/${selectedFkt}`)
             .then((response) => {
                 setData(response.data)
                 setIsLoading(false)
             })
-    }
+    }, [selectedFkt])
 
     useEffect(() => {
         fetch()
-    }, [selectedFkt])
+    }, [selectedFkt, fetch])
 
     return { isLoading, selectedFkt, setSelectedFkt, data }
 }

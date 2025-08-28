@@ -18,9 +18,9 @@ const Home = () => {
     }
 
     useEffect(() => {
-        if (currentPage == 0) {
+        if (currentPage === 0) {
             let current = localStorage.getItem("page")
-            if (current != undefined && current != null) {
+            if (current !== undefined && current !== null) {
                 setCurrentPage(parseInt(current))
             }
             else {
@@ -58,7 +58,7 @@ const Home = () => {
                     container spacing={2}
                 >
                     {
-                        isFetched && constructions.length == 0 &&
+                        isFetched && constructions.length === 0 &&
                         <Typography variant="h6">
                             Aucun resultat qui correspond à votre recherche
                         </Typography>

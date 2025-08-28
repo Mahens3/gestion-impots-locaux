@@ -1,16 +1,13 @@
 import { Box, Pagination, Button, Stack, Grid } from "@mui/material"
-import Layout from "presentation/components/layout/layout"
 import { useEffect, useState } from "react"
 import { Search } from "@mui/icons-material"
-import useFokontany from "presentation/hooks/useFokontany"
 import useFindConstruction from "../../hooks/useFindConstruction"
 
 import CardSkeleton from "presentation/components/skeleton"
 import CardItem from "presentation/components/item"
 
 
-const Construction = () => {    
-    const fokontany = useFokontany()
+const Construction = () => {
 
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 24;
@@ -25,59 +22,32 @@ const Construction = () => {
     const handleSearch = (e) => {
         setSearch(e.target.value)
         let sessionSearch = localStorage.getItem("search")
-        if (sessionSearch != "") {
+        if (sessionSearch !== "") {
             localStorage.removeItem("search")
         }
     }
 
     useEffect(() => {
-        if (currentPage == 0) {
-            let current = localStorage.getItem("page")
-            if (current != undefined && current != null) {
-                setCurrentPage(parseInt(current))
-            }
-            else {
-                setCurrentPage(1)
-            }
-        }
-        refetch()
+        let current = localStorage.getItem("page");
+        let sessionSearch = localStorage.getItem("search");
 
-    }, [currentPage]);
-
-    useEffect(() => {
-        let sessionSearch = localStorage.getItem("search")
-        if (sessionSearch != "" && sessionSearch != undefined) {
-            setSearch(sessionSearch)
+        if (currentPage === 0) {
+            setCurrentPage(current ? parseInt(current) : 1);
         }
 
-        if (search == "") {
-            let current = localStorage.getItem("page")
-            if (current != undefined && current != null) {
-                setCurrentPage(parseInt(current))
-            }
-            else {
-                setCurrentPage(1)
-            }
-            fetch()
+        if (sessionSearch && sessionSearch !== "") {
+            setSearch(sessionSearch);
         }
-    }, [search])
+
+        refetch();
+    }, [currentPage, search]);
 
     return (
         <>
-            <Box
-                p={4}
-                mb={10}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        pb: 4,
-                    }}
-                >
+            <Box p={4} mb={10}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 4 }}>
                     {
-                        (search !== "" && constructions.length == 0) ?
+                        (search !== "" && constructions.length === 0) ?
                             <Box>Aucun resultat trouvé</Box> :
                             <Box>{constructions.length} construction(s), IFPB: {montant} Ar</Box>
                     }

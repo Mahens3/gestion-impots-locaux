@@ -7,7 +7,6 @@ import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { FiberManualRecord, Folder, Home, Payments } from "@mui/icons-material";
 
 import { BarChart, SplineChart } from "presentation/components/layout/chart";
-import Layout from "presentation/components/layout/layout";
 import { formatter } from "presentation/helpers/convertisseur";
 import { Spinner } from "presentation/components/loader"
 

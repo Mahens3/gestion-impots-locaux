@@ -1,5 +1,4 @@
 import { Box, SpeedDial, SpeedDialAction } from "@mui/material"
-import Layout from "presentation/components/layout/layout"
 
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
@@ -37,7 +36,7 @@ const Map = () => {
 
     const handleConstruction = () => {
         if (isDrawing) {
-            navigation("/construction/new/" + JSON.stringify(construction))
+            navigation("/admin/construction/new/" + JSON.stringify(construction))
         }
         setIsDrawing(!isDrawing)
     }
@@ -79,12 +78,12 @@ const Map = () => {
 
         data.forEach((value) => {
             const customMarkerIcon = L.divIcon({
-                className: `custom-icon ${numcons == value.numcons ? 'text-danger' : 'text-success'} `,
+                className: `custom-icon ${numcons === value.numcons ? 'text-danger' : 'text-success'} `,
                 html: '<i class="fa fa-home"></i>',
                 iconSize: [30, 30],
             })
             const marker = L.marker(value.position, { icon: customMarkerIcon })
-            
+
             const customPopup = `
                 <div class='d-flex'>
                     <div>
@@ -111,7 +110,7 @@ const Map = () => {
             mapRef.current.addLayer(markers)
         }
 
-    }, [data])
+    }, [data, numcons])
 
     return (
         <>
@@ -126,7 +125,7 @@ const Map = () => {
                         context.setSelectedFokontany(e.target.value)
                     }}
                 >
-                    {context.fokontanyList.map(
+                    {(context.fokontanyList ?? []).map(
                         (fokontany, key) =>
                             <option
                                 value={fokontany.id} key={key}>
@@ -160,7 +159,6 @@ const Map = () => {
                 />
 
                 <MapEvents />
-
                 {
                     isDrawing ?
                         <Polyline
@@ -192,7 +190,7 @@ const Carte = () => {
         if (idfoko) {
             setSelectedFokontany(idfoko)
         }
-    }, [])
+    }, [idfoko, setSelectedFokontany])
 
     return (
         <>
