@@ -16,6 +16,7 @@ use App\Http\Controllers\ConstructionController;
 use App\Http\Controllers\ProprietaireController;
 use App\Http\Controllers\RemoteAccessController;
 use App\Http\Controllers\ConnectivityController;
+use App\Http\Controllers\CoordonneesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,9 +29,15 @@ use App\Http\Controllers\ConnectivityController;
 |
 */
 
+
+Route::post('/coordonnees/get', [CoordonneesController::class, 'getcoord']);
+
+
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/agent/auth', [ConnectivityController::class, 'login']);
+Route::post('/connectivity', [ConnectivityController::class, 'connectivity']);
+
 
 //Route::middleware('jwt.verify')->get('/construction/page/{page}', [FetchController::class, 'findDefault']);
 
