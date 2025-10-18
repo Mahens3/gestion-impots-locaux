@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:geohetra/models/construction.dart";
 import 'package:geohetra/pages/proprietaire.dart';
 import "components.dart";
 import "package:geohetra/models/proprietaire.dart";
@@ -17,8 +18,13 @@ Widget widgetProprietaire(Proprietaire proprietaire, Size size) {
       )));
 }
 
-Widget containerProprietaire(Proprietaire? proprietaire, Function setter,
-    Size screen, BuildContext context) {
+Widget containerProprietaire(
+  Proprietaire? proprietaire,
+  Function setter,
+  Size screen,
+  BuildContext context,
+  Construction construction,
+) {
   return Container(
     child: proprietaire == null
         ? Center(
@@ -34,6 +40,7 @@ Widget containerProprietaire(Proprietaire? proprietaire, Function setter,
                             builder: (context) => FormProprietaire(
                                   proprietaire: proprietaire,
                                   setter: setter,
+                                  numcons: construction.numcons, // 👈 correct
                                 ));
                         Navigator.of(context).push(route);
                       },

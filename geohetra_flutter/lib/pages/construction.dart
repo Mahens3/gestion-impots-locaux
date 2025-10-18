@@ -230,7 +230,7 @@ class _FormConstructionState extends State<FormConstruction> {
       value: "oui",
       groupValue: wc,
       title: const Text("Oui"),
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           wc = value as String?;
@@ -242,7 +242,7 @@ class _FormConstructionState extends State<FormConstruction> {
       value: "non",
       title: const Text("Non"),
       groupValue: wc,
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           wc = value as String?;
@@ -388,7 +388,7 @@ class _FormConstructionState extends State<FormConstruction> {
         backgroundColor: color.AppColor.backgroundColor,
         appBar: AppBar(
           title: const Text("Formulaire construction"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         body: Column(children: [
           Expanded(
@@ -400,9 +400,9 @@ class _FormConstructionState extends State<FormConstruction> {
                     items: data.Construction.dropdownTypecons,
                     setState: changeValueOf),
                 widgetFkt(),
-                myTextField(adress, "Lot", focusNode: FocusNode()),
+                myTextField(adress, "Lot", focusNode: FocusNode(),  validator: (value) => null,),
                 myTextField(boriboritany, "Boriboritany",
-                    focusNode: FocusNode()),
+                    focusNode: FocusNode(),  validator: (value) => null,),
                 MyDropdown(
                     label: "Mur",
                     value: mur,
@@ -439,24 +439,24 @@ class _FormConstructionState extends State<FormConstruction> {
                     items: data.Construction.dropdownEtatmur,
                     setState: changeValueOf),
                 myRadioButton(),
-                myTextField(anconst, "Année de la construction", number: true),
+                myTextField(anconst, "Année de la construction", number: true, validator: (value) => null),
                 myTextField(nbrniv, "Niveau(nombre d'etage)",
-                    number: true, focusNode: nivFocus),
+                    number: true, focusNode: nivFocus, validator: (value) => null),
                 myTextField(nbrhab, "Nombre de logement pour habitation",
-                    number: true, focusNode: habFocus),
+                    number: true, focusNode: habFocus, validator: (value) => null),
                 myTextField(nbrcom, "Nombre de logement pour commerce",
-                    number: true, focusNode: comFocus),
+                    number: true, focusNode: comFocus, validator: (value) => null),
                 myTextField(nbrbur, "Nombre de logement pour bureau",
-                    number: true, focusNode: burFocus),
+                    number: true, focusNode: burFocus, validator: (value) => null),
                 myTextField(nbrprop, "Nombre de logement pour propriétaire",
-                    number: true, focusNode: propFocus),
+                    number: true, focusNode: propFocus, validator: (value) => null),
                 myTextField(nbrloc, "Nombre de logement à louer",
-                    number: true, focusNode: locFocus),
+                    number: true, focusNode: locFocus, validator: (value) => null),
                 myTextField(
                     nbrocgrat, "Nombre de logement pour occupant gratuit",
-                    number: true, focusNode: ocgratFocus),
+                    number: true, focusNode: ocgratFocus, validator: (value) => null),
                 myTextField(surface, "Surface de la construction",
-                    number: true, focusNode: surfaceFocus),
+                    number: true, focusNode: surfaceFocus, validator: (value) => null),
                 saveButton(widget.next ? nextStep : handleUpdate),
               ],
             ),

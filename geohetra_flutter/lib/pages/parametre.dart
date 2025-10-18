@@ -57,7 +57,7 @@ class _ParametreState extends State<Parametre> {
   Container save() {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.blue,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -113,12 +113,12 @@ class _ParametreState extends State<Parametre> {
         backgroundColor: color.AppColor.backgroundColor,
         appBar: AppBar(
           title: const Text("Parametre"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         body: Column(children: [
           Expanded(
             child: ListView(
-              children: [myTextField(ctrl, "Adresse du serveur"), save()],
+              children: [myTextField(ctrl, "Adresse du serveur", validator: (value) => null), save()],
             ),
           ),
         ]));

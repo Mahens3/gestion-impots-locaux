@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Widget myTextField(TextEditingController ctrl, String text,
-    {bool number = false, FocusNode? focusNode}) {
+    {bool number = false, FocusNode? focusNode, required String? Function(dynamic value) validator}) {
   return Container(
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),

@@ -165,7 +165,7 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
         backgroundColor: color.AppColor.backgroundColor,
         appBar: AppBar(
           title: const Text("Detail"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         body: SizedBox(
             child: Column(
@@ -175,7 +175,7 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
               height: 70,
               alignment: Alignment.center,
               width: screen.width,
-              color: Colors.green,
+              color: Colors.blue,
               child: TabBar(
                 isScrollable: true,
                 indicatorWeight: 4,
@@ -263,9 +263,9 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
                 children: [
                   widgetConstruct(construction, screen, filename, context,
                       setConstruction, changeFile),
-                  containerProprietaire(
-                      proprietaire, setProprietaire, screen, context),
-                  containerIfpb(ifpb, setIfpb, screen, context),
+                  containerProprietaire(proprietaire, setProprietaire, screen,
+                      context, construction),
+                  containerIfpb(ifpb, setIfpb, screen, context, construction),
                   widgetLogements(widget.construction.id as int, logements,
                       setLogements, screen, context),
                   widgetPersonnes(widget.construction.id as int, personnes,
@@ -276,7 +276,7 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
           ],
         )),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.blue,
           onPressed: () {
             MaterialPageRoute route;
             switch (tabController.index) {

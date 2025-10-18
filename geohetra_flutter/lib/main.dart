@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -63,29 +65,59 @@ class _MyAppState extends State<MyApp> {
         if (result != ConnectivityResult.none) {
           Utils.showEstablished(context, "Serveur connecté", dismissed);
         } else {
-          Utils.showError(context);
+          Utils.showError(context, message: "Serveur déconnecté");
         }
       }
     }
   }
 
+  // void send() async {
+  //   var phone = await DB.instance.getUser();
+  //   var connectivity = await HttpServer.checkConnectivity(phone);
+  //   if (connectivity["connect"] == true) {
+  //     setState(() {
+  //       isSending = true;
+  //     });
+  //     HttpServer server = HttpServer(phone: phone, date: connectivity);
+  //     await server.send().then((value) {
+  //       setState(() {
+  //         isSending = false;
+  //         dismissed = false;
+  //         Utils.showFinished(context);
+  //       });
+  //     });
+  //   } else {
+  //     Utils.showError(context);
+  //   }
+  // }
+
   void send() async {
     var phone = await DB.instance.getUser();
+    print("📱 Utilisateur actuel : $phone");
+
+    try {
+      var serverUrl = await getServer();
+      print("🌍 Serveur détecté : $serverUrl");
+    } catch (e) {
+      print("🚨 Erreur lors de la lecture du serveur : $e");
+    }
+
     var connectivity = await HttpServer.checkConnectivity(phone);
     if (connectivity["connect"] == true) {
-      setState(() {
-        isSending = true;
-      });
+      setState(() => isSending = true);
+
       HttpServer server = HttpServer(phone: phone, date: connectivity);
-      await server.send().then((value) {
+
+      await server.send().then((_) {
         setState(() {
           isSending = false;
           dismissed = false;
-          Utils.showFinished(context);
         });
+        Utils.showFinished(context);
       });
     } else {
-      Utils.showError(context);
+      print("❌ Serveur inaccessible, impossible d'envoyer les données");
+      Utils.showError(context, message: 'Serveur introuvable ou non connecté');
     }
   }
 

@@ -54,17 +54,33 @@ class _FormIfpbState extends State<FormIfpb> {
 
   void handleSave() async {
     Ifpb ifpb = getIfpb();
-    setState(() {
-      loading = true;
-    });
+    setState(() => loading = true);
+
+    if (widget.numcons == null || widget.numcons!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Erreur : aucun numéro de construction fourni.")),
+      );
+      setState(() => loading = false);
+      return;
+    }
+
     ifpb.datetimes = now();
     ifpb.numif = await identity();
-    await DB.instance.insertIfpb(ifpb, widget.numcons as String).then((value) {
+
+    try {
+      await DB.instance.insertIfpb(ifpb, widget.numcons!);
       widget.setter(ifpb);
       Timer(const Duration(seconds: 1), () {
         Navigator.of(context).pop();
       });
-    });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de l\'enregistrement : $e')),
+      );
+    } finally {
+      setState(() => loading = false);
+    }
   }
 
   void handleUpdate() async {
@@ -89,7 +105,7 @@ class _FormIfpbState extends State<FormIfpb> {
       value: "oui",
       groupValue: exon,
       title: const Text("Oui"),
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           exon = value as String;
@@ -101,7 +117,7 @@ class _FormIfpbState extends State<FormIfpb> {
       value: "non",
       title: const Text("Non"),
       groupValue: exon,
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           exon = value as String;
@@ -127,7 +143,7 @@ class _FormIfpbState extends State<FormIfpb> {
         backgroundColor: color.AppColor.backgroundColor,
         appBar: AppBar(
           title: const Text("Formulaire IFPB"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         body: Column(children: [
           Expanded(
@@ -136,23 +152,33 @@ class _FormIfpbState extends State<FormIfpb> {
                 myRadioButton(MediaQuery.of(context).size.width),
                 exon == "oui"
                     ? myTextField(dernanne, "Dernière année de l'avis",
-                        number: true, focusNode: FocusNode())
+                        number: true,
+                        focusNode: FocusNode(),
+                        validator: (value) => null)
                     : const SizedBox(),
                 exon == "oui"
                     ? myTextField(montantins, "Montant inscrit",
-                        number: true, focusNode: FocusNode())
+                        number: true,
+                        focusNode: FocusNode(),
+                        validator: (value) => null)
                     : const SizedBox(),
                 exon == "oui"
                     ? myTextField(montantpay, "Montant payé",
-                        number: true, focusNode: FocusNode())
+                        number: true,
+                        focusNode: FocusNode(),
+                        validator: (value) => null)
                     : const SizedBox(),
                 exon == "oui"
                     ? myTextField(article, "Article",
-                        number: true, focusNode: FocusNode())
+                        number: true,
+                        focusNode: FocusNode(),
+                        validator: (value) => null)
                     : const SizedBox(),
                 exon == "oui"
                     ? myTextField(role, "Role",
-                        number: true, focusNode: FocusNode())
+                        number: true,
+                        focusNode: FocusNode(),
+                        validator: (value) => null)
                     : const SizedBox(),
                 saveButton(ifpb == null ? handleSave : handleUpdate,
                     loading: loading)

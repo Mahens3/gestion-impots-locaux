@@ -164,7 +164,9 @@ class DB {
     final cree = await db
         .rawQuery("SELECT numcons FROM construction WHERE idagt is not null");
 
-    int pourcent = ((fini.length * 100) / total.length).ceil();
+    // int pourcent = ((fini.length * 100) / total.length).ceil();
+    int pourcent =
+        total.length > 0 ? ((fini.length * 100) / total.length).ceil() : 0;
 
     return {
       "pourcentage": pourcent.toString(),
@@ -178,17 +180,58 @@ class DB {
   Future<int> insertProprietaire(
       Proprietaire proprietaire, String numcons) async {
     final db = await instance.database;
-    final id = await db.insert("proprietaire", proprietaire.toJson());
-    final updated = await db.rawUpdate(
-        "UPDATE construction SET numprop='${proprietaire.numprop}' WHERE id=$numcons");
-    return updated + id;
+
+    print("🟦 [insertProprietaire] Début de l'insertion...");
+    print("➡️ Données du propriétaire : ${proprietaire.toJson()}");
+    print("➡️ Numéro de construction associé : $numcons");
+
+    try {
+      // Insertion du propriétaire
+      final id = await db.insert("proprietaire", proprietaire.toJson());
+      print("✅ Insertion réussie dans 'proprietaire' avec ID = $id");
+
+      // Mise à jour de la table construction
+      final updated = await db.rawUpdate(
+        "UPDATE construction SET numprop=? WHERE numcons=?",
+        [proprietaire.numprop, numcons],
+      );
+      print(
+          "🟩 Mise à jour 'construction' réussie : $updated ligne(s) affectée(s)");
+
+      return updated + id;
+    } catch (e) {
+      print("❌ Erreur lors de insertProprietaire : $e");
+      return 0;
+    }
   }
 
-  Future updateProprietaire(Proprietaire proprietaire) async {
+  Future<Map<String, dynamic>?> updateProprietaire(
+      Proprietaire proprietaire) async {
     final db = await instance.database;
-    await db.update("proprietaire", proprietaire.toJson(),
-        where: 'numprop=?', whereArgs: [proprietaire.numprop]);
-    return proprietaire.toJson();
+
+    print("🟦 [updateProprietaire] Début de la mise à jour...");
+    print("➡️ Propriétaire : ${proprietaire.toJson()}");
+
+    try {
+      final count = await db.update(
+        "proprietaire",
+        proprietaire.toJson(),
+        where: 'numprop = ?',
+        whereArgs: [proprietaire.numprop],
+      );
+
+      if (count == 0) {
+        print(
+            "⚠️ Aucun propriétaire trouvé avec numprop = ${proprietaire.numprop}");
+      } else {
+        print("✅ Mise à jour réussie : $count ligne(s) affectée(s)");
+      }
+
+      return {"updatedCount": count, "proprietaire": proprietaire.toJson()};
+    } catch (e) {
+      print("❌ Erreur lors de updateProprietaire : $e");
+      return null;
+    }
   }
 
   Future<List<Map<String, Object?>>> queryBuilder(String query) async {
@@ -365,10 +408,29 @@ class DB {
 
   Future<int> insertIfpb(Ifpb ifpb, String numcons) async {
     final db = await instance.database;
-    final id = await db.insert("ifpb", ifpb.toJson());
-    final updated = await db.rawUpdate(
-        "UPDATE construction SET numifpb='${ifpb.numif}' WHERE id=$numcons");
-    return updated + id;
+
+    print("🟦 [insertIfpb] Début de l'insertion...");
+    print("➡️ Données Ifpb : ${ifpb.toJson()}");
+    print("➡️ Numéro de construction associé : $numcons");
+
+    try {
+      // Insertion de l'IFPB
+      final id = await db.insert("ifpb", ifpb.toJson());
+      print("✅ Insertion réussie dans 'ifpb' avec ID = $id");
+
+      // Mise à jour de la table construction
+      final updated = await db.rawUpdate(
+        "UPDATE construction SET numifpb=? WHERE numcons=?",
+        [ifpb.numif, numcons],
+      );
+      print(
+          "🟩 Mise à jour 'construction' réussie : $updated ligne(s) affectée(s)");
+
+      return updated + id;
+    } catch (e) {
+      print("❌ Erreur lors de insertIfpb : $e");
+      return 0;
+    }
   }
 
   Future updateIfpb(Ifpb ifpb) async {

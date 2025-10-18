@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:geohetra/api/date.dart';
 import 'package:geohetra/models/proprietaire.dart';
@@ -13,85 +12,140 @@ class FormProprietaire extends StatefulWidget {
   final Proprietaire? proprietaire;
   final Function? setter;
   final String? numcons;
-  const FormProprietaire(
-      {Key? key, this.proprietaire, this.numcons, this.setter})
-      : super(key: key);
+
+  const FormProprietaire({
+    Key? key,
+    this.proprietaire,
+    this.numcons,
+    this.setter,
+  }) : super(key: key);
+
   @override
   State<FormProprietaire> createState() => _FormProprietaireState();
 }
 
 class _FormProprietaireState extends State<FormProprietaire> {
   Proprietaire? proprietaire;
+  String? type = "";
+  late TextEditingController nom;
+  late TextEditingController prenom;
+  late TextEditingController adresse;
+  late FocusNode nomFocus;
+  bool loading = false;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     proprietaire = widget.proprietaire;
+
+    // Initialisation des contrôleurs avec les valeurs existantes (ou vides)
+    nom = TextEditingController(text: proprietaire?.nomprop ?? "");
+    prenom = TextEditingController(text: proprietaire?.prenomprop ?? "");
+    adresse = TextEditingController(text: proprietaire?.adress ?? "");
+    nomFocus = FocusNode();
+
+    // Récupération du type si présent
+    type = proprietaire?.typeprop ?? "";
   }
 
-  late String? type = "";
-  late TextEditingController nom = TextEditingController(
-      text: proprietaire != null ? proprietaire!.nomprop : "");
-  late FocusNode nomFocus = FocusNode();
-  late TextEditingController prenom = TextEditingController(
-      text: proprietaire != null ? proprietaire!.prenomprop : "");
-  late TextEditingController adresse = TextEditingController(
-      text: proprietaire != null ? proprietaire!.adress : "");
-  late bool loading = false;
+  @override
+  void dispose() {
+    nom.dispose();
+    prenom.dispose();
+    adresse.dispose();
+    nomFocus.dispose();
+    super.dispose();
+  }
 
+  /// Construit un objet Proprietaire à partir des champs
   Proprietaire getProprietaire() {
     return Proprietaire(
-        nomprop: nom.text.toUpperCase(),
-        prenomprop: prenom.text,
-        adress: adresse.text,
-        typeprop: type,
-        datetimes: now());
+      nomprop: nom.text.trim().toUpperCase(),
+      prenomprop: prenom.text.trim(),
+      adress: adresse.text.trim(),
+      typeprop: type,
+      datetimes: now(),
+    );
   }
 
-  void handleSave() async {
-    Proprietaire proprietaire = getProprietaire();
-    proprietaire.datetimes = now();
-    proprietaire.numprop = await identity();
+  /// Enregistrer un nouveau propriétaire
+  Future<void> handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      loading = true;
-    });
-    if (nom.text.isNotEmpty) {
-      await DB.instance
-          .insertProprietaire(proprietaire, widget.numcons as String)
-          .then((value) async {
-        await widget.setter!(proprietaire);
-        Timer(const Duration(seconds: 1), () {
-          Navigator.of(context).pop();
-        });
-      });
-    } else {
-      nomFocus.requestFocus();
+    if (widget.numcons == null || widget.numcons!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Erreur : aucun numéro de construction fourni."),
+        ),
+      );
+      return;
+    }
+
+
+    setState(() => loading = true);
+    try {
+      Proprietaire p = getProprietaire();
+      p.datetimes = now();
+      p.numprop = await identity();
+
+      print("🟦 [handleSave] numcons = ${widget.numcons}");
+      print("🟦 [handleSave] proprietaire = ${p.toJson()}");
+
+      await DB.instance.insertProprietaire(p, widget.numcons!);
+
+      if (widget.setter != null) widget.setter!(p);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('✅ Propriétaire enregistré avec succès')),
+        );
+        Navigator.of(context).pop(p);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Erreur lors de l\'enregistrement : $e')),
+      );
+    } finally {
+      if (mounted) setState(() => loading = false);
     }
   }
 
-  void handleUpdate() async {
-    Proprietaire proprietaire = getProprietaire();
-    setState(() {
-      loading = true;
-    });
-    proprietaire.datetimes = widget.proprietaire!.datetimes;
-    proprietaire.numprop = widget.proprietaire!.numprop;
-    if (nom.text.isNotEmpty) {
-      await DB.instance.updateProprietaire(proprietaire).then((value) {
-        widget.setter!(proprietaire);
-        Timer(const Duration(seconds: 1), () {
-          Navigator.of(context).pop();
-        });
-      });
-    } else {
-      nomFocus.requestFocus();
+  /// Mettre à jour un propriétaire existant
+  Future<void> handleUpdate() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => loading = true);
+    try {
+      Proprietaire p = getProprietaire();
+      p.datetimes = widget.proprietaire!.datetimes;
+      p.numprop = widget.proprietaire!.numprop;
+
+      await DB.instance.updateProprietaire(p);
+
+      if (widget.setter != null) widget.setter!(p);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Propriétaire mis à jour avec succès')),
+        );
+        Navigator.of(context).pop(p);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la mise à jour : $e')),
+      );
+    } finally {
+      if (mounted) setState(() => loading = false);
     }
   }
 
+  /// Gestion du changement de valeur d’un champ (ex: dropdown)
   void changeValueOf(String varToChange, String valueOf) {
     switch (varToChange) {
-      case ("Type"):
+      case "Type":
         setState(() {
           type = valueOf;
         });
@@ -101,25 +155,88 @@ class _FormProprietaireState extends State<FormProprietaire> {
 
   @override
   Widget build(BuildContext context) {
-    data.Proprietaire.dropDownItems();
+    // Préparer les éléments du dropdown depuis le fichier data
+    final List<DropdownMenuItem<String>> typeOptions =
+        data.Proprietaire.dropDownItems();
+
     return Scaffold(
-        backgroundColor: color.AppColor.backgroundColor,
-        appBar: AppBar(
-          title: const Text("Formulaire de propriétaire"),
-          backgroundColor: Colors.green[900],
-        ),
-        body: Column(children: [
-          Expanded(
+      backgroundColor: color.AppColor.backgroundColor,
+      appBar: AppBar(
+        title: const Text("Formulaire de propriétaire"),
+        backgroundColor: Colors.blue[900],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Form(
+            key: _formKey,
             child: ListView(
               children: [
-                myTextField(nom, "Nom", focusNode: nomFocus),
-                myTextField(prenom, "Prénoms"),
-                myTextField(adresse, "Adresse"),
-                saveButton(proprietaire == null ? handleSave : handleUpdate,
-                    loading: loading)
+                myTextField(
+                  nom,
+                  "Nom",
+                  focusNode: nomFocus,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Le nom est obligatoire";
+                    }
+                    return null;
+                  },
+                ),
+                myTextField(
+                  prenom,
+                  "Prénoms",
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Le prénom est obligatoire";
+                    }
+                    return null;
+                  },
+                ),
+                myTextField(
+                  adresse,
+                  "Adresse",
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "L'adresse est obligatoire";
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 15),
+
+                // Dropdown pour le type de propriétaire (si tu veux le garder)
+                DropdownButtonFormField<String>(
+                  value: type?.isNotEmpty == true ? type : null,
+                  decoration: InputDecoration(
+                    labelText: "Type de propriétaire",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  items: typeOptions.map((DropdownMenuItem<String> t) {
+                    return DropdownMenuItem<String>(
+                      value: t.value,
+                      child: t.child,
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) changeValueOf("Type", value);
+                  },
+                ),
+
+                const SizedBox(height: 25),
+
+                saveButton(
+                  proprietaire == null ? handleSave : handleUpdate,
+                  loading: loading,
+                ),
               ],
             ),
           ),
-        ]));
+        ),
+      ),
+    );
   }
 }

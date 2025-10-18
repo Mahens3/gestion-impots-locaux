@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:geohetra/database/database.dart';
@@ -61,57 +63,132 @@ class HttpServer {
   }
 
   // Envoi des données au serveur distant
-  Future send() async {
-    var baseUrl = await getServer();
-    List<Map<String, Object?>> proprietaires = await DB.instance.queryBuilder(
-        "SELECT * FROM proprietaire WHERE datetimes>'" +
-            date["proprietaire"].toString() +
-            "'");
-    List<Map<String, Object?>> ifpb = await DB.instance.queryBuilder(
-        "SELECT * FROM ifpb WHERE datetimes>'" + date["ifpb"].toString() + "'");
 
-    dynamic idagt =
-        await DB.instance.queryBuilder("SELECT idagt FROM user WHERE active=1");
-    idagt = idagt.first['idagt'];
+  // Future send() async {
+  //   var baseUrl = await getServer();
+  //   List<Map<String, Object?>> proprietaires = await DB.instance.queryBuilder(
+  //       "SELECT * FROM proprietaire WHERE datetimes>'" +
+  //           date["proprietaire"].toString() +
+  //           "'");
+  //   List<Map<String, Object?>> ifpb = await DB.instance.queryBuilder(
+  //       "SELECT * FROM ifpb WHERE datetimes>'" + date["ifpb"].toString() + "'");
 
-    List<Map<String, Object?>> constructions = await DB.instance.queryBuilder(
-        "SELECT * FROM construction WHERE datetimes>'" +
-            date["construction"].toString() +
-            "' AND idagt=" +
-            idagt.toString());
+  //   dynamic idagt =
+  //       await DB.instance.queryBuilder("SELECT idagt FROM user WHERE active=1");
+  //   idagt = idagt.first['idagt'];
 
-    List<Map<String, Object?>> logements = await DB.instance.queryBuilder(
-        "SELECT l.*, c.numcons FROM logement l, construction c WHERE l.idcons=c.id AND l.datetimes>'" +
-            date["logement"].toString() +
-            "'");
+  //   List<Map<String, Object?>> constructions = await DB.instance.queryBuilder(
+  //       "SELECT * FROM construction WHERE datetimes>'" +
+  //           date["construction"].toString() +
+  //           "' AND idagt=" +
+  //           idagt.toString());
 
-    List<Map<String, Object?>> personnes = await DB.instance.queryBuilder(
-        "SELECT c.numcons, p.* FROM personne p, construction c WHERE c.id=p.idcons AND p.datetimes>'" +
-            date["personne"].toString() +
-            "'");
+  //   List<Map<String, Object?>> logements = await DB.instance.queryBuilder(
+  //       "SELECT l.*, c.numcons FROM logement l, construction c WHERE l.idcons=c.id AND l.datetimes>'" +
+  //           date["logement"].toString() +
+  //           "'");
 
-    var request =
-        http.MultipartRequest('POST', Uri.parse(baseUrl + "/api/remote"));
+  //   List<Map<String, Object?>> personnes = await DB.instance.queryBuilder(
+  //       "SELECT c.numcons, p.* FROM personne p, construction c WHERE c.id=p.idcons AND p.datetimes>'" +
+  //           date["personne"].toString() +
+  //           "'");
 
-    request.fields.addAll({
-      "constructions": json.encode(constructions),
-      "logements": json.encode(logements),
-      "proprietaires": json.encode(proprietaires),
-      "ifpbs": json.encode(ifpb),
-      "personne": json.encode(personnes),
-      "phone": phone
-    });
+  //   var request =
+  //       http.MultipartRequest('POST', Uri.parse(baseUrl + "/api/remote"));
 
-    request = await addImage(constructions, request);
+  //   request.fields.addAll({
+  //     "constructions": json.encode(constructions),
+  //     "logements": json.encode(logements),
+  //     "proprietaires": json.encode(proprietaires),
+  //     "ifpbs": json.encode(ifpb),
+  //     "personne": json.encode(personnes),
+  //     "phone": phone
+  //   });
 
-    try {
-      await request.send().then((value) async {
-        //print(await value.stream.bytesToString());
-      });
-    } catch (e) {
-      return 0;
+  //   request = await addImage(constructions, request);
+
+  //   try {
+  //     await request.send().then((value) async {
+  //       //print(await value.stream.bytesToString());
+  //     });
+  //   } catch (e) {
+  //     return 0;
+  //   }
+  // }
+
+  Future<void> send() async {
+  var baseUrl = await getServer();
+  print("🌐 Envoi des données vers : $baseUrl");
+
+  // 🔹 Récupération des données locales modifiées depuis la dernière synchro
+  List<Map<String, Object?>> proprietaires = await DB.instance.queryBuilder(
+      "SELECT * FROM proprietaire WHERE datetimes > '${date["proprietaire"]}'");
+
+  List<Map<String, Object?>> ifpbs = await DB.instance
+      .queryBuilder("SELECT * FROM ifpb WHERE datetimes > '${date["ifpb"]}'");
+
+  dynamic idagt =
+      await DB.instance.queryBuilder("SELECT idagt FROM user WHERE active=1");
+  idagt = idagt.first['idagt'];
+
+  List<Map<String, Object?>> constructions = await DB.instance.queryBuilder(
+      "SELECT * FROM construction WHERE datetimes > '${date["construction"]}' AND idagt = $idagt");
+
+  List<Map<String, Object?>> logements = await DB.instance.queryBuilder(
+      "SELECT l.*, c.numcons FROM logement l JOIN construction c ON l.idcons = c.id WHERE l.datetimes > '${date["logement"]}'");
+
+  List<Map<String, Object?>> personnes = await DB.instance.queryBuilder(
+      "SELECT c.numcons, p.* FROM personne p JOIN construction c ON p.idcons = c.id WHERE p.datetimes > '${date["personne"]}'");
+
+  print("📦 Données à envoyer :");
+  print("  ➤ ${constructions.length} constructions");
+  print("  ➤ ${logements.length} logements");
+  print("  ➤ ${personnes.length} personnes");
+  print("  ➤ ${proprietaires.length} propriétaires");
+  print("  ➤ ${ifpbs.length} ifpb");
+
+  // 🔹 Récupérer les infos utilisateur locales (téléphone + mot de passe)
+  List<Map<String, Object?>> user =
+      await DB.instance.queryBuilder("SELECT phone, mdp FROM user WHERE active=1");
+  String phone = user.first['phone'].toString();
+  String mdp = user.first['mdp'].toString();
+
+  print("📱 Envoi des données pour : $phone / mdp=$mdp");
+
+  // 🔹 Préparer la requête HTTP multipart
+  var request =
+      http.MultipartRequest('POST', Uri.parse('$baseUrl/api/upload'));
+
+  request.fields.addAll({
+    "constructions": json.encode(constructions),
+    "logements": json.encode(logements),
+    "proprietaires": json.encode(proprietaires),
+    "ifpbs": json.encode(ifpbs),
+    "personnes": json.encode(personnes),
+    "phone": phone,
+    "mdp": mdp,
+  });
+
+  print(ifpbs);
+  print("Logements: $logements");
+
+  // 🔹 Ajouter les images si disponibles
+  request = await addImage(constructions, request);
+
+  try {
+    var response = await request.send();
+    var body = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      print("✅ Envoi réussi : $body");
+    } else {
+      print("❌ Erreur serveur [${response.statusCode}] : $body");
     }
+  } catch (e) {
+    print("🚨 Erreur lors de l’envoi : $e");
   }
+}
+
 
   Future<List<Map<String, Object?>>> getPropVide(List<dynamic> propvide) async {
     List<Map<String, Object?>> list = [];
@@ -141,6 +218,7 @@ class HttpServer {
 
       print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
+      print("Data : ${json.decode(response.body)}");
 
       if (response.statusCode != 200) {
         return {"server": true, "agent": false};
@@ -153,8 +231,12 @@ class HttpServer {
           // Créer les données de l'agent pour la table user
           Map<String, Object?> agent = {
             "phone": phone,
+            "pseudo": data["pseudo"],
             "mdp": password,
+            "numequip": data["numequip"],
+            "type": data["type"],
             "active": 1,
+            "idagt": data["idagt"],
           };
 
           print("Tentative d'insertion agent: $agent");
@@ -175,27 +257,6 @@ class HttpServer {
       return {"server": false, "agent": false};
     }
   }
-
-  // static Future<Map<String, bool>> getAgent(
-  //     {required String phone, required String password}) async {
-  //   var serverAddr = await getServer();
-  //   try {
-  //     var response = await http.post(Uri.parse(serverAddr + "/api/agent/auth"),
-  //         body: {"phone": phone, "mdp": password});
-  //     print(response.body);
-
-  //     try {
-  //       Map<String, dynamic> data = json.decode(response.body);
-  //       Map<String, Object?> agent = data.cast();
-  //       await DB.instance.insertAgent(agent);
-  //       return {"server": true, "agent": true};
-  //     } catch (e) {
-  //       return {"server": true, "agent": false};
-  //     }
-  //   } catch (e) {
-  //     return {"server": false, "agent": false};
-  //   }
-  // }
 
   Future<List<Map<String, Object?>>> getIfpbVide(List<dynamic> ifpbvide) async {
     List<Map<String, Object?>> list = [];

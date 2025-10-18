@@ -261,7 +261,7 @@ class _FormPersonneState extends State<FormPersonne> {
       value: "Homme",
       groupValue: sexe,
       title: const Text("Homme"),
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           sexe = value as String;
@@ -273,7 +273,7 @@ class _FormPersonneState extends State<FormPersonne> {
       value: "Femme",
       title: const Text("Femme"),
       groupValue: sexe,
-      activeColor: Colors.green,
+      activeColor: Colors.blue,
       onChanged: (value) {
         setState(() {
           sexe = value as String;
@@ -357,7 +357,7 @@ class _FormPersonneState extends State<FormPersonne> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Formulaire personne"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         backgroundColor: color.AppColor.backgroundColor,
         body: Column(children: [
@@ -365,7 +365,7 @@ class _FormPersonneState extends State<FormPersonne> {
             child: ListView(
               children: [
                 myRadioButton(),
-                myTextField(age, "Age", number: true, focusNode: ageFocus),
+                myTextField(age, "Age", number: true, focusNode: ageFocus, validator: (value) => null),
                 profOption.options.isNotEmpty
                     ? MyDropdown(
                         value: profession,

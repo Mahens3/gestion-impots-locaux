@@ -158,7 +158,7 @@ class _FormLogementState extends State<FormLogement> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Formulaire logement"),
-          backgroundColor: Colors.green[900],
+          backgroundColor: Colors.blue[900],
         ),
         backgroundColor: color.AppColor.backgroundColor,
         body: Column(children: [
@@ -182,17 +182,17 @@ class _FormLogementState extends State<FormLogement> {
                     setState: changeValueOf),
                 myDropDownButton("Niveau", niveau, data.Logement.dropdownNiveau,
                     changeValueOf),
-                myTextField(nbrres, "Nombre personne residant", number: true),
-                myTextField(lm, "Loyer mensuel", number: true),
-                myTextField(nbrpp, "Nombre de pièce", number: true),
-                myTextField(stpp, "Surface du logement", number: true),
+                myTextField(nbrres, "Nombre personne residant", number: true, validator: (value) => null),
+                myTextField(lm, "Loyer mensuel", number: true, validator: (value) => null),
+                myTextField(nbrpp, "Nombre de pièce", number: true, validator: (value) => null),
+                myTextField(stpp, "Surface du logement", number: true, validator: (value) => null),
                 CheckBoxes(
                     options: data.Logement.varconfort,
                     value: confort,
                     handleChange: handleConfort,
                     title: "Confort"),
                 myTextField(declarant, "Declarant",
-                    number: false, focusNode: declarantFocus),
+                    number: false, focusNode: declarantFocus, validator: (value) => null),
                 MyDropdown(
                     label: "Lien par rapport au chef du logement",
                     value: lien,

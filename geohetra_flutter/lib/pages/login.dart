@@ -322,7 +322,7 @@ class _LoginState extends State<Login> {
                   )
                 ]),
             child: TextField(
-                cursorColor: Colors.green,
+                cursorColor: Colors.blue,
                 controller: ctrl,
                 decoration: const InputDecoration(border: InputBorder.none)),
           ),
@@ -335,7 +335,7 @@ class _LoginState extends State<Login> {
   Container btnLogin() {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.blue,
       padding: const EdgeInsets.symmetric(horizontal: 5),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))),
@@ -374,7 +374,7 @@ class _LoginState extends State<Login> {
   Container btnRetry() {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: Colors.green[900],
+      backgroundColor: Colors.blue[900],
       padding: const EdgeInsets.symmetric(horizontal: 5),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -416,9 +416,9 @@ class _LoginState extends State<Login> {
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
                 gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-              Colors.green[900] as Color,
-              Colors.green[800] as Color,
-              Colors.green[400] as Color
+              Colors.blue[900] as Color,
+              Colors.blue[800] as Color,
+              Colors.blue[400] as Color
             ])),
             child: authentificate
                 ? logo()
@@ -598,7 +598,8 @@ class _LoginState extends State<Login> {
                                       const FadeAnimation(
                                           2,
                                           Text(
-                                            "Application mobile pour le recensement fiscal de la commune urbaine Ambalavao",
+                                            // "Application mobile pour le recensement fiscal de la commune urbaine Ambalavao",
+                                            "",
                                             textAlign: TextAlign.center,
                                             style:
                                                 TextStyle(color: Colors.grey),

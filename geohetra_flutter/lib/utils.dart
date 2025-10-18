@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class Utils {
-  static void showError(BuildContext context) =>
+  static void showError(BuildContext context, {required String message}) =>
       showSimpleNotification(const Text("Notification"),
           subtitle: const Text("Serveur introuvable"),
           autoDismiss: true,

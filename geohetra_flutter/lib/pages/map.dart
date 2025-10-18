@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
@@ -18,6 +20,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:path_provider/path_provider.dart';
+// import 'package:geohetra/api/server.dart';
 
 class OfflineMap extends StatefulWidget {
   final bool isSending;
@@ -283,31 +286,69 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
     });
   }
 
+  // void refresh({bool moved = false}) async {
+  //   var fkt = await DB.instance.getFkt();
+  //   var id = 0;
+  //   try {
+  //     try {
+  //       if (idfoko == 0) {
+  //         id = fkt.first["idfoko"] as int;
+  //       } else {
+  //         id = idfoko;
+  //       }
+  //     } catch (e) {}
+  //   } catch (e) {
+  //     //await DB.instance.insertFokontany();
+  //   } finally {
+  //     setMarkerInachieve(idfkt: id, moved: moved);
+  //     setMarkerAchieve(id);
+  //     setMarkerVoisin(id);
+  //     try {
+  //       var ta = await DB.instance.getTache();
+  //       setState(() {
+  //         idfoko = id;
+  //         tache = ta;
+  //       });
+  //       // ignore: empty_catches
+  //     } catch (e) {}
+  //   }
+  // }
+
   void refresh({bool moved = false}) async {
     var fkt = await DB.instance.getFkt();
     var id = 0;
+
     try {
-      try {
+      if (fkt.isNotEmpty) {
+        // Vérifier que fkt n'est pas vide
         if (idfoko == 0) {
-          id = fkt.first["idfoko"] as int;
+          var idValue = fkt.first["idfoko"];
+          id = (idValue is int)
+              ? idValue
+              : int.tryParse(idValue.toString()) ?? 0;
         } else {
           id = idfoko;
         }
-      } catch (e) {}
+      }
     } catch (e) {
-      //await DB.instance.insertFokontany();
+      print("Erreur récupération id: $e");
     } finally {
-      setMarkerInachieve(idfkt: id, moved: moved);
-      setMarkerAchieve(id);
-      setMarkerVoisin(id);
+      // Vérifier que id est valide avant d'appeler les méthodes
+      if (id > 0) {
+        setMarkerInachieve(idfkt: id, moved: moved);
+        setMarkerAchieve(id);
+        setMarkerVoisin(id);
+      }
+
       try {
         var ta = await DB.instance.getTache();
         setState(() {
           idfoko = id;
           tache = ta;
         });
-        // ignore: empty_catches
-      } catch (e) {}
+      } catch (e) {
+        print("Erreur getTache: $e");
+      }
     }
   }
 
@@ -316,68 +357,253 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
     return support.last.path + "/Geohetra/map/{z}/{x}/{y}.png";
   }
 
+  // Future<void> downloadCoordinates() async {
+  //   var root = await getApplicationSupportDirectory();
+  //   var file = File("${root.path}/settings.json");
+  //   var text = await file.readAsString();
+
+  //   // 🔹 Récupération agent actif
+  //   var agent = await DB.instance.queryBuilder(
+  //     "SELECT idagt FROM user WHERE active=1",
+  //   );
+
+  //   // 🔹 Dernière coordonnée
+  //   var construction = await DB.instance.queryBuilder(
+  //     "SELECT idcoord FROM construction WHERE idagt=${agent.first["idagt"]} ORDER BY idcoord",
+  //   );
+
+  //   var idcoord = "0";
+  //   if (construction.isNotEmpty) {
+  //     idcoord = construction.last["idcoord"].toString();
+  //   }
+
+  //   Map<String, dynamic> data = json.decode(text);
+
+  //   setState(() {
+  //     loading = true;
+  //     str = "0%";
+  //     stage = "Téléchargement des coordonnées...";
+  //   });
+
+  //   try {
+  //     // 🔹 Timeout 30s pour éviter blocage
+  //     print("URL: ${data["server"]}/api/coordonnees/get");
+
+  //     final response = await http.post(
+  //       Uri.parse("${data["server"]}/api/coordonnees/get"),
+  //       headers: {"Content-Type": "application/x-www-form-urlencoded"},
+  //       body: {
+  //         "idagt": agent.first["idagt"].toString(),
+  //         "idcoord": idcoord,
+  //       },
+  //     ).timeout(const Duration(minutes: 5));
+  //     List<dynamic> coordinates = json.decode(response.body);
+
+  //     for (var i = 0; i < coordinates.length; i++) {
+  //       Map<String, dynamic> coords = coordinates[i] as Map<String, dynamic>;
+
+  //       String query = "(${coords["lat"]},${coords["lng"]},${coords["idagt"]},"
+  //           "'${coords["typequart"]}',${coords["rang"]},${coords["idfoko"]},${coords["id"]})";
+
+  //       try {
+  //         await DB.instance.rawQuery(query);
+  //       } catch (e) {
+  //         print("⚠️ Erreur insertion coordonnée $i : $e");
+  //       }
+
+  //       // 🔹 Mise à jour de la progression
+  //       setState(() {
+  //         var pourcent = ((i + 1) * 100) / coordinates.length;
+  //         str = "${pourcent.round()}% (${i + 1}/${coordinates.length})";
+  //       });
+  //     }
+
+  //     setState(() {
+  //       str = "100% - Terminé ✅";
+  //     });
+  //   } catch (e) {
+  //     print("❌ Erreur downloadCoordinates : $e");
+  //     setState(() {
+  //       str = "Échec du téléchargement ❌";
+  //     });
+  //   } finally {
+  //     setState(() {
+  //       loading = false;
+  //       refresh();
+  //     });
+  //   }
+  // }
+
   Future downloadCoordinates() async {
+    print("DÉBUT downloadCoordinates()");
+
     var root = await getApplicationSupportDirectory();
     var file = File(root.path + "/settings.json");
+
+    if (!await file.exists()) {
+      print("Fichier settings.json introuvable");
+      return;
+    }
+
     var text = await file.readAsString();
+    print("Contenu settings.json: $text");
 
-    var agent =
-        await DB.instance.queryBuilder("SELECT idagt FROM user WHERE active=1");
+    // Récupération agent actif
+    var agent = await DB.instance.queryBuilder(
+      "SELECT idagt FROM user WHERE active=1",
+    );
 
+    if (agent.isEmpty) {
+      print("Aucun agent actif trouvé");
+      return;
+    }
+
+    print("Agent trouvé: $agent");
+    print("Agent trouvé: ${agent.first}");
+
+    // Dernière coordonnée
     var construction = await DB.instance.queryBuilder(
-        "SELECT idcoord FROM construction WHERE idagt=${agent.first["idagt"]} ORDER BY idcoord");
+      "SELECT idcoord FROM construction WHERE idagt=${agent.first["idagt"]} ORDER BY idcoord",
+    );
+
+    print("Constructions existantes: ${construction.length}");
+    if (construction.isNotEmpty) {
+      print("Dernière construction: ${construction.last}");
+    }
+
     var idcoord = "0";
     if (construction.isNotEmpty) {
       idcoord = construction.last["idcoord"].toString();
     }
 
+    print("idcoord utilisé: $idcoord");
+
     Map<String, dynamic> data = json.decode(text);
+
     setState(() {
       loading = true;
+      str = "0%";
+      stage = "Téléchargement des coordonnées...";
     });
+
     try {
+      print("URL de requête: ${data["server"]}/api/coordonnees/get");
+      print("Body de requête: idagt=${agent.first["idagt"]}, idcoord=$idcoord");
+
       final response = await http.post(
-          Uri.parse(data["server"].toString() + "/api/coordonnees/get"),
-          body: {"idagt": agent.first["idagt"].toString(), "idcoord": idcoord});
+        Uri.parse("${data["server"]}/api/coordonnees/get"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "idagt": agent.first["idagt"],
+          "idcoord": idcoord,
+        }),
+      );
 
-      print(response.body);
-      setState(() {
-        str = "0%";
-        stage = "Téléchargement des coordonées...";
-      });
+      // print("Status de réponse: ${response.statusCode}");
+      // print("Body de réponse: ${response.body}");
 
-      List<dynamic> coordinates = json.decode(response.body);
+      // if (response.statusCode != 200) {
+      //   print("❌ Erreur serveur : ${response.statusCode}");
+      //   setState(() => str = "Erreur serveur ❌");
+      //   return;
+      // }
+
+      List<dynamic> coordinates = [];
+      try {
+        final decoded = json.decode(response.body);
+
+        if (decoded is Map<String, dynamic>) {
+          // Extraire la liste de coordonnées depuis la clé "data"
+          coordinates = decoded["data"] ?? [];
+          print("🔍 Coordonnées décodées: ${coordinates.length} éléments");
+
+          if (coordinates.isNotEmpty) {
+            print("🔍 Première coordonnée: ${coordinates.first}");
+            print("🔍 Dernière coordonnée: ${coordinates.last}");
+          }
+        } else {
+          print("❌ Format inattendu de la réponse JSON");
+          setState(() => str = "Erreur format réponse ❌");
+          return;
+        }
+      } catch (e) {
+        print("❌ Erreur décodage JSON: $e");
+        print("❌ Réponse brute: ${response.body}");
+        setState(() => str = "Erreur format réponse ❌");
+        return;
+      }
+
+      if (coordinates.isEmpty) {
+        print("ℹ️ Aucune nouvelle coordonnée à télécharger");
+        setState(() => str = "Aucune nouvelle coordonnée");
+        return;
+      }
+
+      print("📥 Début insertion de ${coordinates.length} coordonnées");
 
       for (var i = 0; i < coordinates.length; i++) {
         Map<String, dynamic> coords = coordinates[i] as Map<String, dynamic>;
-        /**
-        await DB.instance
-            .insertConstruction(Construction.fromDynamic(coords))
-            .then((response) {
-          setState(() {
-            var pourcent = (i * 100) / coordinates.length;
-            str = pourcent.round().toString() + "%";
-          });
-        });
-         */
+
+        print("🔍 Traitement coordonnée $i: $coords");
+
+        // ✅ Gestion sécurisée des valeurs null
+        final lat = coords["lat"] ?? 0.0;
+        final lng = coords["lng"] ?? 0.0;
+        final idagt = coords["idagt"] ?? 0;
+        final typequart = coords["typequart"] ?? '';
+        final rang = coords["rang"] ?? 0;
+        final idfoko = coords["idfoko"] ?? 0;
+        final id = coords["id"] ?? 0;
+
+        print(
+            "🔍 Valeurs converties - lat:$lat, lng:$lng, idagt:$idagt, typequart:'$typequart', rang:$rang, idfoko:$idfoko, id:$id");
+
         String query =
-            "(${coords["lat"]},${coords["lng"]},${coords["idagt"]},'${coords["typequart"]}',${coords["rang"]},${coords["idfoko"]},${coords["id"]})";
-        await DB.instance.rawQuery(query).then((value) {
-          setState(() {
-            var pourcent = (i * 100) / coordinates.length;
-            str = pourcent.round().toString() + "%";
-          });
+            "($lat, $lng, $idagt, '$typequart', $rang, $idfoko, $id)";
+        print(
+            "🔍 Query d'insertion: INSERT INTO construction(lat,lng,idagt,typequart,rang,idfoko,idcoord) VALUES$query");
+
+        try {
+          var result = await DB.instance.rawQuery(query);
+          print("✅ Coordonnée $i insérée avec succès, résultat: $result");
+        } catch (e) {
+          print("⚠️ Erreur insertion coordonnée $i : $e");
+          print(
+              "⚠️ Query complète: INSERT INTO construction(lat,lng,idagt,typequart,rang,idfoko,idcoord) VALUES$query");
+        }
+
+        // 🔹 Mise à jour de la progression
+        setState(() {
+          var pourcent = ((i + 1) * 100) / coordinates.length;
+          str = "${pourcent.round()}% (${i + 1}/${coordinates.length})";
         });
+
+        // Petit délai pour voir les logs
+        await Future.delayed(Duration(milliseconds: 100));
       }
-      // ignore: empty_catches
+
+      // Vérification finale
+      var finalCount = await DB.instance.queryBuilder(
+        "SELECT COUNT(*) as count FROM construction WHERE idagt=${agent.first["idagt"]}",
+      );
+      print(
+          "🔍 Nombre total de constructions après insertion: ${finalCount.first['count']}");
+
+      setState(() {
+        str = "100% - Terminé ✅";
+      });
     } catch (e) {
-      print(e.toString());
+      print("❌ Erreur downloadCoordinates : $e");
+      print("❌ Stack trace: ${e.toString()}");
+      setState(() => str = "Échec du téléchargement ❌");
+    } finally {
+      setState(() {
+        loading = false;
+        refresh();
+      });
     }
 
-    setState(() {
-      loading = false;
-      refresh();
-    });
+    print("🏁 FIN downloadCoordinates()");
   }
 
   void handleError(bool value) {
@@ -424,8 +650,8 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                             children: [
                               Image.asset(
                                 "assets/logo.png",
-                                width: 30,
-                                height: 30,
+                                width: 50,
+                                height: 50,
                               ),
                               const Text(
                                 "Geo",
@@ -459,7 +685,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: Colors.blue,
                                         borderRadius: BorderRadius.circular(2)),
                                     padding: const EdgeInsets.all(5),
                                     margin:
@@ -509,7 +735,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: Colors.blue,
                                         borderRadius: BorderRadius.circular(2)),
                                     padding: const EdgeInsets.all(5),
                                     margin:
@@ -558,7 +784,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: Colors.blue,
                                         borderRadius: BorderRadius.circular(2)),
                                     padding: const EdgeInsets.all(5),
                                     margin:
@@ -811,22 +1037,19 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text(
-                        "Copyright ",
+                        "© 2025",
                         style: TextStyle(fontSize: 11),
                       ),
-                      Icon(
-                        Icons.copyright,
-                        size: 13,
-                      ),
+                      SizedBox(width: 2),
                       Text(
-                        " 2023 developped by ",
+                        "Développement",
                         style: TextStyle(fontSize: 11),
                       ),
-                      Text(
-                        "Dera Philippe",
-                        style: TextStyle(
-                            fontSize: 11, fontWeight: FontWeight.bold),
-                      ),
+                      // Text(
+                      //   "Rl",
+                      //   style: TextStyle(
+                      //       fontSize: 11, fontWeight: FontWeight.bold),
+                      // ),
                     ],
                   ))
             ]));
@@ -874,9 +1097,9 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                   gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-                Colors.green[900] as Color,
-                Colors.green[800] as Color,
-                Colors.green[400] as Color
+                Colors.blue[900] as Color,
+                Colors.blue[800] as Color,
+                Colors.blue[400] as Color
               ])),
               child: Center(
                 child: Column(children: [
@@ -935,7 +1158,8 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                 ]),
               ))
           : FutureBuilder<String>(
-              future: _getPathMap(),
+              //future: _getPathMap(),
+              future: Future.value("ok"),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
@@ -945,31 +1169,44 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                           FlutterMap(
                             mapController: mapController,
                             options: MapOptions(
-                              onTap: (position, latlng) {
+                              onTap: (tapPosition, latlng) {
                                 setState(() {
                                   positionCreate = latlng;
                                 });
                               },
-                              rotation: 0.5,
-                              interactiveFlags: InteractiveFlag.drag |
-                                  InteractiveFlag.pinchZoom,
-                              center: center,
+                              rotation: 0.0,
+                              interactiveFlags:
+                                  InteractiveFlag.all, // tout activer
+                              center: LatLng(-21.82762, 46.94021), // Ambalavao
                               maxZoom: 19,
-                              minZoom: 14,
+                              minZoom: 3,
                               zoom: 14,
                               plugins: [MarkerClusterPlugin()],
                             ),
                             layers: [
                               TileLayerOptions(
-                                evictErrorTileStrategy:
-                                    EvictErrorTileStrategy.notVisible,
-                                tileProvider: FileTileProvider(),
-                                errorImage: const AssetImage("assets/grey.png"),
-                                errorTileCallback: ((tile, error) {}),
+                                urlTemplate:
+                                    "https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+                                subdomains: ['mt0', 'mt1', 'mt2'],
+                                maxZoom: 20,
                                 backgroundColor: Colors.grey,
-                                tms: true,
-                                urlTemplate: snapshot.data,
+                                errorImage: AssetImage("assets/grey.png"),
+                                userAgentPackageName: 'com.example.geohetra',
                               ),
+                              // TileLayerOptions(
+                              //   urlTemplate:
+                              //       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                              //   subdomains: [
+                              //     'a',
+                              //     'b',
+                              //     'c'
+                              //   ], // OpenStreetMap utilise a, b, c
+                              //   maxZoom: 19,
+                              //   backgroundColor: Colors.grey,
+                              //   errorImage: AssetImage("assets/grey.png"),
+                              //   userAgentPackageName: 'com.example.geohetra',
+                              // ),
+
                               MarkerLayerOptions(
                                 markers: [
                                   Marker(
@@ -993,7 +1230,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                       builder: (context, markers) {
                                         return FloatingActionButton(
                                           heroTag: null,
-                                          backgroundColor: Colors.lightGreen,
+                                          backgroundColor: Colors.lightBlue,
                                           child:
                                               Text(markers.length.toString()),
                                           onPressed: null,
@@ -1017,7 +1254,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                       builder: (context, markers) {
                                         return FloatingActionButton(
                                           heroTag: null,
-                                          backgroundColor: Colors.lightGreen,
+                                          backgroundColor: Colors.lightBlue,
                                           child:
                                               Text(markers.length.toString()),
                                           onPressed: null,
@@ -1038,7 +1275,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                       builder: (context, markers) {
                                         return FloatingActionButton(
                                           heroTag: null,
-                                          backgroundColor: Colors.lightGreen,
+                                          backgroundColor: Colors.lightBlue,
                                           child:
                                               Text(markers.length.toString()),
                                           onPressed: null,
@@ -1090,7 +1327,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     color: canCreate == true
-                                        ? Colors.green
+                                        ? Colors.blue
                                         : Colors.white,
                                     borderRadius: BorderRadius.circular(50)),
                                 child: Icon(
@@ -1118,7 +1355,7 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                                   child: Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: Colors.blue,
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                     child: const Icon(
@@ -1154,12 +1391,13 @@ class OfflineMapState extends State<OfflineMap> with TickerProviderStateMixin {
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height,
                     decoration: BoxDecoration(
-                        gradient:
-                            LinearGradient(begin: Alignment.topCenter, colors: [
-                      Colors.green[900] as Color,
-                      Colors.green[800] as Color,
-                      Colors.green[400] as Color
-                    ])),
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            colors: [
+                          Colors.blue[900] as Color,
+                          Colors.blue[800] as Color,
+                          Colors.blue[400] as Color
+                        ])),
                     child: const Center(),
                   );
                 }

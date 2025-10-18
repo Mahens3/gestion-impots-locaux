@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class Proprietaire {
   static List<String> types = ["Mr", "Mme", "Autre"];
-  static List<DropdownMenuItem<String>> dropdownTypes = [];
-  static void dropDownItems() {
-    dropdownTypes.clear();
 
-    for (var item in types) {
-      dropdownTypes.add(DropdownMenuItem(value: item, child: Text(item)));
-    }
+  static List<DropdownMenuItem<String>> dropDownItems() {
+    // Retourne directement une nouvelle liste au lieu de modifier une variable statique
+    return types
+        .map((item) => DropdownMenuItem(
+              value: item,
+              child: Text(item),
+            ))
+        .toList();
   }
 }

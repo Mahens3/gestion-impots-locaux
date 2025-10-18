@@ -9,7 +9,7 @@ import 'package:latlong2/latlong.dart';
 Container saveButton(Function? handleChange, {bool? loading}) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.green,
+    backgroundColor: Colors.blue,
     padding: const EdgeInsets.symmetric(horizontal: 16),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -65,7 +65,7 @@ InkWell newConstruction(
             color: Colors.white,
           ),
           decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.blue,
               borderRadius: BorderRadius.circular(25),
               boxShadow: const [
                 BoxShadow(
@@ -89,7 +89,7 @@ InkWell showTerrain(BuildContext context, Function fonction, bool show) {
             color: Colors.white,
           ),
           decoration: BoxDecoration(
-              color: show ? Colors.green : Colors.grey,
+              color: show ? Colors.blue : Colors.grey,
               borderRadius: BorderRadius.circular(25),
               boxShadow: const [
                 BoxShadow(
@@ -118,7 +118,7 @@ Widget buttonEditLog(
     Logement? logement, int id, Function refresh, BuildContext context) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.green,
+    backgroundColor: Colors.blue,
     padding: const EdgeInsets.symmetric(horizontal: 13),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -154,7 +154,7 @@ Widget buttonEditPers(
     Personne? personne, int id, Function refresh, BuildContext context) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.green,
+    backgroundColor: Colors.blue,
     padding: const EdgeInsets.symmetric(horizontal: 13),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10))),

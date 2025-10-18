@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:geohetra/models/ifpb.dart';
+import "package:geohetra/models/construction.dart";
 import 'package:geohetra/pages/ifpb.dart';
 import "components.dart";
 
@@ -21,7 +22,7 @@ Widget widgetIFPB(Ifpb ifpb, Size size) {
 }
 
 Widget containerIfpb(
-    Ifpb? ifpb, Function setter, Size screen, BuildContext context) {
+    Ifpb? ifpb, Function setter, Size screen, BuildContext context, Construction construction,) {
   return Container(
     child: ifpb == null
         ? Center(
@@ -34,10 +35,12 @@ Widget containerIfpb(
                       iconSize: 100,
                       onPressed: () {
                         var route = MaterialPageRoute(
-                            builder: (context) => FormIfpb(
-                                  ifpb: ifpb,
-                                  setter: setter,
-                                ));
+                          builder: (context) => FormIfpb(
+                            ifpb: ifpb,
+                            setter: setter,
+                            numcons: construction.numcons, 
+                          ),
+                        );
                         Navigator.of(context).push(route);
                       },
                       icon: Icon(
