@@ -7,7 +7,7 @@ const axios = api.create(
 )
 
 axios.interceptors.request.use((config) => {
-    if(config.url!="/api/auth/login"){
+    if(config.url!=="/api/auth/login"){
         config["headers"]["Authorization"] = `Bearer ${localStorage.getItem("token")}`
     }
     return config;
@@ -17,7 +17,7 @@ axios.interceptors.response.use(
     (response) => response,
     (error) => {
         console.log(error)
-        if(error.response.status == 500) {
+        if(error.response.status === 500) {
             toast.error("Erreur côté serveur") 
         }
         else {

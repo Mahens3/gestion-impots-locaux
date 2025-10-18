@@ -57,6 +57,7 @@ export const FormParametre = ({ closeModal, parametre }) => {
 
     const [colonnes, setColonnes] = useState([]);
 
+
     const typeEntity = {
         "construction": { "mur": "Mur", "etatmur": "Etat du mur", "ossature": "Ossature", "fondation": "Fondation", "toiture": "Toiture", "typecons": "Type construction", "typequart": "Type quartier", "access": "Accéssibilité" },
         "logement": { "confort": "Confort", "typelog": "Usage" }
@@ -86,7 +87,7 @@ export const FormParametre = ({ closeModal, parametre }) => {
         }
         console.log(data);
         axios.post(
-            parametre == undefined
+            parametre === undefined
                 ? "api/parametre/add"
                 : "api/parametre/update",
             data
@@ -97,7 +98,7 @@ export const FormParametre = ({ closeModal, parametre }) => {
     };
 
     useEffect(() => {
-        if (parametre == undefined) {
+        if (parametre === undefined) {
             setEntity("construction");
             setColonnes(typeEntity["construction"]);
             setColonne("mur");
@@ -108,6 +109,7 @@ export const FormParametre = ({ closeModal, parametre }) => {
             setValeur(parametre.valeur);
             setCoeff(parametre.coeff);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [parametre]);
 
     return (
@@ -228,12 +230,12 @@ export const FormFokontany = ({ fokontany, closeModal }) => {
             nomfokontany: nomfokontany,
         };
 
-        if (fokontany != undefined) {
+        if (fokontany !== undefined) {
             data["id"] = fokontany["id"];
         }
 
         await axios.post(
-            fokontany == undefined
+            fokontany === undefined
                 ? "api/fokontany/add"
                 : "api/fokontany/update",
             data
@@ -311,9 +313,9 @@ export const FormFokontany = ({ fokontany, closeModal }) => {
 export const FormAgent = ({ agent, closeModal }) => {
     const [isSent, setIsSent] = useState(false);
     const [data, setData] = useState({
-        "phone" : "",
-        "mdp" : "",
-        "nom" : ""
+        "phone": "",
+        "mdp": "",
+        "nom": ""
     })
 
     const handleChange = (key, value) => {
@@ -326,7 +328,7 @@ export const FormAgent = ({ agent, closeModal }) => {
     const send = async () => {
         setIsSent(true);
         data['type'] = "agent"
-        if (agent == undefined) {
+        if (agent === undefined) {
             await axios.post(
                 "/api/agent",
                 data
@@ -353,7 +355,7 @@ export const FormAgent = ({ agent, closeModal }) => {
         if (agent) {
             setData(agent)
         }
-    }, [])
+    }, [agent])
 
     return (
         <Modal
@@ -495,7 +497,7 @@ export const ModalPayment = ({ index, resteApaye, state, setState, numcons, clos
     }
 
     const handleMontant = (value) => {
-        if (value == "") {
+        if (value === "") {
             handlePayment("montant", "")
         }
         else {

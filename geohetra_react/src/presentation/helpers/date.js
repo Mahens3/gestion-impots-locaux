@@ -13,7 +13,7 @@ export const getTime = () => {
     // Obtenez les parties de l'heure
     var hours = date.getHours().toString().padStart(2, '0');
     var minutes = date.getMinutes().toString().padStart(2, '0');
-    var seconds = date.getSeconds().toString().padStart(2, '0');
+    //var seconds = date.getSeconds().toString().padStart(2, '0');
 
     return hours + ':' + minutes;
 }

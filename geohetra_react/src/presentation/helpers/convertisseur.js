@@ -33,7 +33,7 @@ const convert = (nbr) => {
             letterNbr = tri(data[i]) + param1[count] + " " + letterNbr 
             count += 1
         }
-        if((nbr+"").length==4 && str[0]=="1"){
+        if((nbr+"").length===4 && str[0]==="1"){
             letterNbr = letterNbr.replace("un","")
         }
         return letterNbr.trim()
@@ -41,26 +41,26 @@ const convert = (nbr) => {
 
     const tri = (data) => {
         let str = ""
-        if(unite[parseInt(data[1] + data[2]) + ""]!=undefined){
+        if(unite[parseInt(data[1] + data[2]) + ""]!==undefined){
             str = unite[parseInt(data[1] + data[2]) + ""]
         }
-        else if(data[1]=="9"){
-            if(data[2]=="0"){
+        else if(data[1]==="9"){
+            if(data[2]==="0"){
                 str = "quatre-vingt";
             }
             else{
                 str = "quatre-vingt " + dizaine["1" + data[2]]
             }
         }
-        else if(data[1]=="7"){
-            if(data[2]=="0"){
+        else if(data[1]==="7"){
+            if(data[2]==="0"){
                 str = "soixante-dix";
             }
             else{
                 str = "soixante " + dizaine["1" + data[2]]
             }
         }
-        else if(dizaine[parseInt(data[1] + data[2]) + ""]!=undefined){
+        else if(dizaine[parseInt(data[1] + data[2]) + ""]!==undefined){
             str = dizaine[parseInt(data[1] + data[2]) + ""] 
         }
         else{
@@ -72,10 +72,10 @@ const convert = (nbr) => {
     }
 
     const getCentaine = (first) => {
-        if(first == 0){
+        if(first === 0){
             return ""
         }
-        else if(first=="1"){
+        else if(first==="1"){
             return "cent"
         }
         else{

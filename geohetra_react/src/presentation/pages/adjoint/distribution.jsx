@@ -1,5 +1,5 @@
 import { Box, SpeedDial, SpeedDialAction } from "@mui/material"
-import { createContext, useEffect, useRef, useState } from "react"
+import { createContext, useRef, useState } from "react"
 
 import 'leaflet.markercluster'
 import "leaflet/dist/leaflet.css"
@@ -17,6 +17,7 @@ const initialCenter = [-21.83083, 46.932005]
 const Map = () => {
     const [construction, setConstruction] = useState([])
     const [isDrawing, setIsDrawing] = useState(false)
+    // eslint-disable-next-line no-unused-vars
     const [center, setCenter] = useState(initialCenter)
     const [polygonArea, setPolygonArea] = useState(null)
 

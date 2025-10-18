@@ -18,7 +18,7 @@ const CardItem = ({ data }) => {
                 cursor: "pointer",
             }}
         >
-            {imageLoading == true && (
+            {imageLoading === true && (
                 <Box
                     display="flex"
                     alignItems="center"
@@ -48,7 +48,7 @@ const CardItem = ({ data }) => {
                     justifyContent="flex-start"
                 >
                     <Person sx={{
-                        backgroundColor: data.reste == 0 ? "green" : "#fff",
+                        backgroundColor: data.reste === 0 ? "green" : "#fff",
                         width: "25px",
                         color: "#BBBBBB",
                         mr: 1,
@@ -73,7 +73,7 @@ const CardItem = ({ data }) => {
                         }}
                     >{data.surface} m² ({data.niveau} niv)</Typography>
                     {
-                        localStorage.getItem("mode") == "gestion" &&
+                        localStorage.getItem("mode") === "gestion" &&
                         <Typography
                             sx={{
                                 fontSize: "0.8rem"
@@ -112,7 +112,7 @@ const CardItem = ({ data }) => {
                 >
                     Fokontany: {data.fokontany}
                 </Typography>
-                <NavLink to={`/map/idfoko=${data.idfoko}/numcons=${data.numcons}`}><i className="fa fa-thumb-tack"></i></NavLink>
+                <NavLink to={`/admin/map/idfoko=${data.idfoko}/numcons=${data.numcons}`}><i className="fa fa-thumb-tack"></i></NavLink>
             </CardContent>
         </Card>
     )

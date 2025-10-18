@@ -44,7 +44,7 @@ const SideNav = (props) => {
           <Box
             sx={{
               alignItems: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
               borderRadius: 1,
               cursor: 'pointer',
               display: 'flex',
@@ -54,19 +54,19 @@ const SideNav = (props) => {
             }}
           >
             <Link to="/" style={{ display: 'flex', height: 50, width: 50, marginRight: 10 }}>
-              <img src="/images/logo.png" />
+              <img src="/images/logo.png" alt='logo' />
             </Link>
             <div>
               <Typography color="inherit" variant="h6">
                 Geohetra
               </Typography>
-              <Typography color="neutral.400" style={{ fontSize: "0.8rem" }}>
+              <Typography color="neutral.300" style={{ fontSize: "0.8rem" }}>
                 Geomatique et Impôt
               </Typography>
             </div>
           </Box>
         </Box>
-        <Divider sx={{ borderColor: 'neutral.700' }} />
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
         <Box
           component="nav"
           sx={{
@@ -89,7 +89,7 @@ const SideNav = (props) => {
             );
           })}
         </Box>
-        <Divider sx={{ borderColor: 'neutral.700' }} />
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
         <Box
           sx={{
             px: 2,
@@ -102,12 +102,17 @@ const SideNav = (props) => {
           <Button
             component="a"
             fullWidth
-            sx={{ mt: 2 }}
+            sx={{ 
+              mt: 2,
+              backgroundColor: '#1976d2',
+              '&:hover': {
+                backgroundColor: '#1565c0',
+              }
+            }}
             target="_blank"
             variant="contained"
-            color='success'
             onClick={() => {
-              navigate("/map")
+              navigate("/admin/map")
             }}
           >
             Carte
@@ -123,7 +128,7 @@ const SideNav = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: '#2B5028',
+            backgroundColor: '#1e3a8a', // Bleu foncé principal
             color: 'common.white',
             width: 280
           }
@@ -142,7 +147,7 @@ const SideNav = (props) => {
       open={open}
       PaperProps={{
         sx: {
-          backgroundColor: '#457740',
+          backgroundColor: '#2563eb', // Bleu moyen pour mobile
           color: 'common.white',
           width: 280
         }

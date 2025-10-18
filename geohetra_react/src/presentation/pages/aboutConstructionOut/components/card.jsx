@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { Folder } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 
 const CardItem = ({ data, parameter, index, title, col }) => {
@@ -8,22 +8,22 @@ const CardItem = ({ data, parameter, index, title, col }) => {
 
     const keys = Object.keys(parameter)
 
-    const handleData = () => {
+    const handleData = useCallback(() => {
         let state = {}
         Object.keys(data).forEach((value) => {
             state[value] = data[value]
         })
         setState(state)
-    }
+    }, [data])
 
     useEffect(() => {
-        if (state == null) {
+        if (state === null) {
             handleData()
         }
-    }, [state])
+    }, [state,handleData])
 
     const getTitle = () => {
-        return title + ' ' + (title == "Logement" ? (index + 1) : "")
+        return title + ' ' + (title === "Logement" ? (index + 1) : "")
     }
 
     return (
@@ -54,7 +54,7 @@ const CardItem = ({ data, parameter, index, title, col }) => {
                                             <Folder sx={{ color: "#ECECEC", mr: 1 }} />
                                             <Typography fontWeight="bold"> {parameter[key]["title"]}</Typography>
                                         </Box>
-                                        <Typography sx={{ pl: 4, pb: 2, color: state[key] == "Inconnu" ? "grey" : "black" }}>{(state[key] == "Inconnu" || state[key] == "" || state[key] == null) ? "Inconnu" : state[key]}</Typography>
+                                        <Typography sx={{ pl: 4, pb: 2, color: state[key] === "Inconnu" ? "grey" : "black" }}>{(state[key] === "Inconnu" || state[key] === "" || state[key] === null) ? "Inconnu" : state[key]}</Typography>
                                     </div>
                                 ))}
                         </div>

@@ -18,7 +18,9 @@ import SearchIcon from '@mui/icons-material/Search';
 
 export const Table = ({ colaction, rows, withIndex = false, add, keys, title }) => {
     const [page, setPage] = useState(1)
-    const [rowsPerPage, setRowsPerPage] = useState(24);
+    // const [rowsPerPage, setRowsPerPage] = useState(24);
+    const rowsPerPage = 24;
+
     const [search, setSearch] = useState('');
 
     const handleChangePage = (event, newPage) => {

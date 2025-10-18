@@ -5,8 +5,3 @@
 import '@testing-library/jest-dom';
 
 
-
-// mollyyyyyd
-// danieelatinaa
-// zhafirarahayuningtyasp39769
-// sienna.rishette

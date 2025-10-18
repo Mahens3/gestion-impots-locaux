@@ -1,8 +1,8 @@
 import { Box, Pagination, Button, Stack, Grid } from "@mui/material"
-import Layout from "presentation/components/layout/layout"
+//import Layout from "presentation/components/layout/layout"
 import { useEffect, useState } from "react"
 import { Search } from "@mui/icons-material"
-import useFokontany from "presentation/hooks/useFokontany"
+//import useFokontany from "presentation/hooks/useFokontany"
 import useFindConstruction from "../../hooks/useFindConstruction"
 
 import CardSkeleton from "presentation/components/skeleton"
@@ -10,7 +10,7 @@ import CardItem from "presentation/components/item"
 
 
 const Construction = () => {    
-    const fokontany = useFokontany()
+    //const fokontany = useFokontany()
 
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 24;
@@ -25,15 +25,15 @@ const Construction = () => {
     const handleSearch = (e) => {
         setSearch(e.target.value)
         let sessionSearch = localStorage.getItem("search")
-        if (sessionSearch != "") {
+        if (sessionSearch !== "") {
             localStorage.removeItem("search")
         }
     }
 
     useEffect(() => {
-        if (currentPage == 0) {
+        if (currentPage === 0) {
             let current = localStorage.getItem("page")
-            if (current != undefined && current != null) {
+            if (current !== undefined && current !== null) {
                 setCurrentPage(parseInt(current))
             }
             else {
@@ -42,17 +42,17 @@ const Construction = () => {
         }
         refetch()
 
-    }, [currentPage]);
+    }, [currentPage, refetch]);
 
     useEffect(() => {
         let sessionSearch = localStorage.getItem("search")
-        if (sessionSearch != "" && sessionSearch != undefined) {
+        if (sessionSearch !== "" && sessionSearch !== undefined) {
             setSearch(sessionSearch)
         }
 
-        if (search == "") {
+        if (search === "") {
             let current = localStorage.getItem("page")
-            if (current != undefined && current != null) {
+            if (current !== undefined && current !== null) {
                 setCurrentPage(parseInt(current))
             }
             else {
@@ -77,7 +77,7 @@ const Construction = () => {
                     }}
                 >
                     {
-                        (search !== "" && constructions.length == 0) ?
+                        (search !== "" && constructions.length === 0) ?
                             <Box>Aucun resultat trouvé</Box> :
                             <Box>{constructions.length} construction(s), IFPB: {montant} Ar</Box>
                     }
@@ -112,7 +112,7 @@ const Construction = () => {
                                 setCurrentPage(1)
                                 refetch()
                             }}
-                            color="success" >
+                            backgroundColor ="#1976d2" >
                             Rechercher
                         </Button>
                     </Stack>

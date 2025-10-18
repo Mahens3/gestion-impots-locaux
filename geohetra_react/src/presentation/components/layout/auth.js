@@ -47,7 +47,7 @@ export const Layout = (props) => {
                                 width: 32
                             }}
                         >
-                            <img src='/images/logo.png' />
+                            <img src='/images/logo.png' alt='logo' />
                         </Box>
                     </Box>
                     {children}

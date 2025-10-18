@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { Folder } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getDate } from 'presentation/helpers/date';
 import ConstructionService from 'domain/services/constructionService';
 import { toast } from 'react-toastify';
@@ -21,7 +21,7 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
     const handleSend = async () => {
         if (field) {
             setField(false)
-            if (data[id] == null || data[id] == undefined) {
+            if (data[id] === null || data[id] === undefined) {
                 state[id] = getDate()
                 state["typecons"] = "Imposable"
                 await ConstructionService.post("/api" + url, state)
@@ -32,7 +32,7 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
                             ...prevState,
                             [id]: state[id]
                         }))
-                        if (title == "Construction") {
+                        if (title === "Construction") {
                             refresh(state[id])
                         }
                     })
@@ -40,7 +40,7 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
             else {
                 state[id] = data[id]
                 let form = new FormData()
-                if (title == "Construction") {
+                if (title === "Construction") {
                     form.append("image", file)
                     form.append("data", JSON.stringify(state))
                     await ConstructionService.post("/api/update/construction", form)
@@ -69,9 +69,9 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
             data.push(name)
         }
         else {
-            data = data.filter((value) => value != name)
+            data = data.filter((value) => value !== name)
         }
-        handleState(key, data.filter((value) => value != "").join(", "))
+        handleState(key, data.filter((value) => value !== "").join(", "))
     }
 
     const CheckBoxOption = ({ k, data, name }) => {
@@ -81,38 +81,34 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
             setChecked(!checked)
         }
 
-        const verify = () => {
-            if (!data.includes(name)) {
-                setChecked(false)
-            }
-            else {
-                setChecked(true)
-            }
-        }
-
         useEffect(() => {
-            if (checked == null) {
-                verify()
+            if (checked === null) {
+                if (!data.includes(name)) {
+                    setChecked(false)
+                }
+                else {
+                    setChecked(true)
+                }
             }
-        }, [checked])
+        }, [data, name, checked])
 
         return (
             <input type="checkbox" checked={checked} onClick={handleChange} />
         )
     }
 
-    const handleData = () => {
+    const handleData = useMemo(() => {
         let state = {}
         Object.keys(data).forEach((value) => {
             state[value] = data[value]
         })
         setState(state)
-    }
+    }, [data])
 
     const switcher = (key) => {
         switch (parameter[key].type) {
             case "select":
-                if (typeof parameter[key].options[0] == "string") {
+                if (typeof parameter[key].options[0] === "string") {
                     return (
                         <select className='form-select' value={state[key]} onChange={(e) => handleState(key, e.target.value)}>
                             {parameter[key].options.map((value, key) => <option key={key} value={value}>{value}</option>)}
@@ -132,7 +128,7 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
                         {
                             parameter[key].options.map((value, index) => (
                                 <div>
-                                    <input key={index} type="radio" checked={value == state[key] ? true : false} name='wc' onClick={(e) => handleState(key, value)} />
+                                    <input key={index} type="radio" checked={value === state[key] ? true : false} name='wc' onClick={(e) => handleState(key, value)} />
                                     <span>{value}</span>
                                 </div>)
                             )
@@ -159,19 +155,19 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
     }
 
     useEffect(() => {
-        if (state == null) {
+        if (state === null) {
             handleData()
         }
-    }, [state])
+    }, [state, handleData])
 
     useEffect(() => {
-        if (data[id] == undefined) {
+        if (data[id] === undefined) {
             setField(true)
         }
-    }, [data])
+    }, [data, id])
 
     const getTitle = () => {
-        return title + ' ' + (title == "Logement" ? (index + 1) : "")
+        return title + ' ' + (title === "Logement" ? (index + 1) : "")
     }
 
     return (
@@ -183,20 +179,20 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
             elevation={0}
         >
             {
-                state != null &&
+                state !== null &&
                 <>
                     <CardHeader
                         title={getTitle()}
                         action={
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                {(title == "Logement" && data != null && data[id] != undefined) && <Button color="error" variant='contained' sx={{ mr: 2 }} >Supprimer</Button>}
+                                {(title === "Logement" && data !== null && data[id] !== undefined) && <Button color="error" variant='contained' sx={{ mr: 2 }} >Supprimer</Button>}
                                 <Button color='success' variant='contained' onClick={handleSend} >{field ? "Enregistrer" : "Modifier"}</Button>
                             </div>
                         }
                     />
                     <CardContent>
                         <div className="row">
-                            {field == true ?
+                            {field === true ?
                                 keys.map((key, index) => (
                                     <div key={index} className={'col-md-' + col}>
                                         <Typography>{parameter[key]["title"]}</Typography>
@@ -213,7 +209,7 @@ const Formulaire = ({ data, file, parameter, url, id, index, title, col, refresh
                                             <Folder sx={{ color: "#ECECEC", mr: 1 }} />
                                             <Typography fontWeight="bold"> {parameter[key]["title"]}</Typography>
                                         </Box>
-                                        <Typography sx={{ pl: 4, pb: 2, color: state[key] == "Inconnu" ? "grey" : "black" }}>{(state[key] == "Inconnu" || state[key] == "" || state[key] == null) ? "Inconnu" : state[key]}</Typography>
+                                        <Typography sx={{ pl: 4, pb: 2, color: state[key] === "Inconnu" ? "grey" : "black" }}>{(state[key] === "Inconnu" || state[key] === "" || state[key] === null) ? "Inconnu" : state[key]}</Typography>
                                     </div>
                                 ))
                             }

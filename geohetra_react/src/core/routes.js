@@ -1,5 +1,5 @@
 import Login from 'presentation/pages/login';
-import Coefficient from 'presentation/pages/coefficient';
+// import Coefficient from 'presentation/pages/coefficient';
 import Construction from 'presentation/pages/listConstruction';
 import AboutConstruction from 'presentation/pages/aboutConstruction';
 import AvisImposition from 'presentation/pages/avis';

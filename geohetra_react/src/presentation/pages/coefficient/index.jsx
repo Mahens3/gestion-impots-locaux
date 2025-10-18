@@ -8,6 +8,7 @@ import { Box } from "@mui/material";
 
 const Coefficient = () => {
     const [data, setData] = useState([])
+    // eslint-disable-next-line no-unused-vars
     const [search, setSearch] = useState("")
     const title = ["Table", "Colonne", "Valeur", "Coefficient"]
     const keys = ["entity", "designation", "valeur", "coeff"]
@@ -31,8 +32,8 @@ const Coefficient = () => {
     const action = (data) => {
         return (
             <td style={{ borderBottom : "1px solid #DFDFDF"}}>
-                <a onClick={() => { handleSelected(data) }} className="btn btn-success"><i className="fa fa-pencil"></i></a>
-                <a onClick={() => { deleteSelected(data) }} className="btn btn-danger"><i className="fa fa-trash"></i></a>
+                <button onClick={() => { handleSelected(data) }} className="btn btn-success"><i className="fa fa-pencil"></i></button>
+                <button onClick={() => { deleteSelected(data) }} className="btn btn-danger"><i className="fa fa-trash"></i></button>
             </td>
         )
     }

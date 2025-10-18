@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import SideNav from './side-nav'
 import TopNav from './top-nav'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import getToken from 'presentation/helpers/token'
 
 const SIDE_NAV_WIDTH = 280
@@ -27,12 +27,12 @@ const Layout = (props) => {
   const { children } = props
   const [openNav, setOpenNav] = useState(false)
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   const checkAuthentification = () => {
     const token = getToken()
 
-    if (token == null) {
+    if (token === null) {
       //navigate("/")
     }
   }
@@ -44,7 +44,7 @@ const Layout = (props) => {
   return (
     <>
       {
-        (props.printed == false || props.printed == undefined) &&
+        (props.printed === false || props.printed === undefined) &&
         <>
           <TopNav onNavOpen={() => setOpenNav(true)} />
           <SideNav onClose={() => setOpenNav(false)} open={openNav} />

@@ -40,7 +40,7 @@ const Header = () => {
                         justifyContent="space-between"
                     >
                         <Link to="/" style={{ display: 'flex', height: 50, width: 50, marginRight: 5 }}>
-                            <img src="/images/logo.png" />
+                            <img src="/images/logo.png" alt="logo" />
                         </Link>
                         <Box>
                             <Typography color="inherit" variant="h5">

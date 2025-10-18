@@ -59,7 +59,7 @@ const AboutConstruction = () => {
 
     const handlePayment = (index, value) => {
         let payes = [...payments]
-        if (index == null) {
+        if (index === null) {
             payes.push(value)
         }
         else {
@@ -68,8 +68,8 @@ const AboutConstruction = () => {
         setPayments(payes)
     }
 
-    const getConstruction = async (numcons = null) => {
-        var response = await axios.get("/api/construction/" + (numcons == null ? id : numcons))
+    const getConstruction = useCallback(async (numcons = null) => {
+        var response = await axios.get("/api/construction/" + (numcons === null ? id : numcons))
         let data = {
             "title": "Fokontany",
             "type": "select",
@@ -83,12 +83,12 @@ const AboutConstruction = () => {
             "idfoko": data
         }))
         response.data = response.data.construction
-        if (response.data == null) {
+        if (response.data === null) {
             const calque = Object.keys(typeconstruction)
                 .reduce((accumulator, key) => {
                     return {
                         ...accumulator,
-                        [key]: typeconstruction[key]["type"] == "select" ? typeconstruction[key]["options"][0] : ""
+                        [key]: typeconstruction[key]["type"] === "select" ? typeconstruction[key]["options"][0] : ""
                     }
                 }, {})
 
@@ -104,7 +104,7 @@ const AboutConstruction = () => {
             setConstruction(calque)
         }
         else {
-            if (response.data.proprietaire == null) {
+            if (response.data.proprietaire === null) {
                 response.data.proprietaire = {}
                 Object.keys(typeproprietaire).forEach((value) => {
                     response.data.proprietaire[value] = ""
@@ -112,13 +112,13 @@ const AboutConstruction = () => {
                 response.data.proprietaire["numcons"] = response.data.numcons
             }
 
-            if (response.data.logements == null) {
+            if (response.data.logements === null) {
                 response.data.logements = []
             }
 
             let logement = {}
             Object.keys(typelogement).forEach((value) => {
-                if (typelogement[value].type == "field" || typelogement[value].type == "checkbox") {
+                if (typelogement[value].type === "field" || typelogement[value].type === "checkbox") {
                     logement[value] = ""
                 }
                 else {
@@ -129,23 +129,23 @@ const AboutConstruction = () => {
             response.data.logements.push(logement)
             response.data.logs.push(logement)
             response.data.logs.map((item) => {
-                if (item.confort == null) {
+                if (item.confort === null) {
                     item.confort = ""
                 }
                 return item
             })
 
-            response.data.logements = response.data.logements.filter((logement) => logement != null)
+            response.data.logements = response.data.logements.filter((logement) => logement !== null)
             setPayments(response.data.payments)
             setConstruction(response.data)
         }
         setLoading(false)
 
-    }
+    }, [id, geometry])
 
     useEffect(() => {
         getConstruction()
-    }, [id, geometry])
+    }, [getConstruction])
 
     const fileRef = useRef()
     const [file, setFile] = useState()
@@ -156,10 +156,10 @@ const AboutConstruction = () => {
         form.append("image", e.target.files[0])
         form.append("numcons", construction.numcons)
         await axios.post("/api/addimage", form)
-        .then((response) => {
-            toast.success("Image changé")
-            setFile(e.target.files[0])
-        })
+            .then((response) => {
+                toast.success("Image changé")
+                setFile(e.target.files[0])
+            })
     }
 
     return (
@@ -172,7 +172,7 @@ const AboutConstruction = () => {
                 {loading ? <Spinner /> :
                     <Box>
                         {
-                            construction.numcons != undefined &&
+                            construction.numcons !== undefined &&
                             <Box
                                 display="flex"
                                 justifyContent="space-between"
@@ -201,7 +201,7 @@ const AboutConstruction = () => {
                                         </ButtonGroup>
                                     </Box>
                                     <Box>
-                                        <Typography variant='h5'>IFPB: {construction.impot != null && formatter(construction.impot) + " Ariary"} </Typography> <Typography>ID: {construction.numcons}</Typography>
+                                        <Typography variant='h5'>IFPB: {construction.impot !== null && formatter(construction.impot) + " Ariary"} </Typography> <Typography>ID: {construction.numcons}</Typography>
 
                                         <Box>
                                             Loyer mensuel:  {construction.loyer}
@@ -209,19 +209,35 @@ const AboutConstruction = () => {
                                     </Box>
 
                                 </Box>
-                                <img style={{ marginTop: "10px", width: "300px", height: "280px", objectFit: "fill", borderRadius: 5, marginRight: 25, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)" }} src={file != null ? URL.createObjectURL(file) : `${apiUrl}/api/image/${construction.image}`} alt="" />
+                                <img
+                                    style={{
+                                        marginTop: "10px",
+                                        width: "300px",
+                                        height: "280px",
+                                        objectFit: "fill",
+                                        borderRadius: 5,
+                                        marginRight: 25,
+                                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
+                                    }}
+                                    src={
+                                        file instanceof File
+                                            ? URL.createObjectURL(file)
+                                            : `${apiUrl}/api/image/${construction.image}`
+                                    }
+                                    alt="construction"
+                                />
                                 <input onChange={handleImageChange} accept='image/*' ref={fileRef} type='file' style={{ display: "none" }} />
 
                             </Box>
                         }
                         <Grid container spacing={2}>
                             {
-                                showDetail ? (construction != null && <>
+                                showDetail ? (construction !== null && <>
 
                                     <Detail data={construction.logements} />
 
                                 </>) :
-                                    construction != null &&
+                                    construction !== null &&
                                     <Grid item xs={12} sm={12} lg={12} md={12}>
                                         <Formulaire
                                             icon="fa fa-home"
@@ -237,7 +253,7 @@ const AboutConstruction = () => {
                                     </Grid>
                             }
                             {
-                                construction.numcons != undefined && !showDetail && <>
+                                construction.numcons !== undefined && !showDetail && <>
 
                                     <Grid item xs={12} sm={12} lg={12} md={12}>
                                         <Formulaire

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import axios from "../../../data/api/axios"
 import { NavLink, useParams } from "react-router-dom"
 import convert from "../../helpers/convertisseur"
@@ -12,7 +12,7 @@ const Tableau = ({ data, id, printed }) => {
     const [typehab, setTypehab] = useState({ "HP": 0, "HT": 0, "AUP": 0, "AUT": 0 })
     const date = new Date()
 
-    const adresse = ([(data.adress != null && data.adress != "") ? (data.adress + ", ") : "", (data.boriboritany != null && data.boriboritany != "") ? (", " + data.boriboritany) : "", data.fokontany.nomfokontany]).join(", ").replaceAll(", ,", "").replaceAll(" , ", ", ").trim()
+    const adresse = ([(data.adress !== null && data.adress !== "") ? (data.adress + ", ") : "", (data.boriboritany !== null && data.boriboritany !== "") ? (", " + data.boriboritany) : "", data.fokontany.nomfokontany]).join(", ").replaceAll(", ,", "").replaceAll(" , ", ", ").trim()
 
     function formatter(number) {
         const numberString = String(number);
@@ -28,11 +28,11 @@ const Tableau = ({ data, id, printed }) => {
         return formattedNumber;
     }
 
-    const handleLogement = () => {
+    const handleLogement = useCallback(() => {
         let type = { "HP": 0, "HT": 0, "AUP": 0, "AUT": 0 }
-        data.logs.map((logement) => {
-            if (logement.typelog == "Habitat") {
-                if (logement.typeoccup == "Propriétaire" || logement.typeoccup == "Occupant gratuit") {
+        data.logs.foreach((logement) => {
+            if (logement.typelog === "Habitat") {
+                if (logement.typeoccup === "Propriétaire" || logement.typeoccup === "Occupant gratuit") {
                     type.HP += Math.round(logement.impotPerYearWithoutTaux)
                 }
                 else {
@@ -40,7 +40,7 @@ const Tableau = ({ data, id, printed }) => {
                 }
             }
             else {
-                if (logement.typeoccup == "Propriétaire" || logement.typeoccup == "Occupant gratuit") {
+                if (logement.typeoccup === "Propriétaire" || logement.typeoccup === "Occupant gratuit") {
                     type.AUP += Math.round(logement.impotPerYearWithoutTaux)
                 }
                 else {
@@ -49,11 +49,11 @@ const Tableau = ({ data, id, printed }) => {
             }
         })
         setTypehab(type)
-    }
+    }, [data])
 
     useEffect(() => {
         handleLogement()
-    }, [data])
+    }, [handleLogement])
 
     return (
         <div className="avis-content">
@@ -80,7 +80,7 @@ const Tableau = ({ data, id, printed }) => {
                 </div>
                 <div className="header-avis">
                     <div className="hcontent">
-                        {printed == false ? <div><NavLink to={"/admin/construction/" + data.numcons} className='btn btn-success'>Modifier</NavLink> </div> : null}
+                        {printed === false ? <div><NavLink to={"/admin/construction/" + data.numcons} className='btn btn-success'>Modifier</NavLink> </div> : null}
                         <div>N° <span className='bold'> {data.numfiche} / {date.getFullYear()} </span>
                         </div>
                         <div> Code : <span className='bold'>206082101</span>
@@ -106,7 +106,7 @@ const Tableau = ({ data, id, printed }) => {
                             <td className='padded'>
                                 <div className="center">
                                     {
-                                        ((data.article != "null" && data.article != null) && data.article)
+                                        ((data.article !== "null" && data.article !== null) && data.article)
 
                                     }
                                 </div>
@@ -116,7 +116,7 @@ const Tableau = ({ data, id, printed }) => {
                             </td>
                             <td className='padded'>
                                 <div>
-                                    {data.proprietaire == null ? "Propriétaire inconnu" : data.proprietaire.nomprop + " " + (data.proprietaire.prenomprop || "")}
+                                    {data.proprietaire === null ? "Propriétaire inconnu" : data.proprietaire.nomprop + " " + (data.proprietaire.prenomprop || "")}
                                 </div>
                                 <div>
                                     {adresse}
@@ -227,10 +227,10 @@ const AvisImposition = () => {
     const nbrItemsPerPage = [50, 100, 200]
     const [loading, setLoading] = useState(true)
 
-    const fetch = async () => {
+    const fetch = useCallback(async () => {
         setData([])
         let url = ""
-        if (id == undefined) {
+        if (id === undefined) {
             url = `/api/avis/page=${currentPage}&nbrperpage=${itemsPerPage}&fokontany=${selectedFkt}`
         }
         else {
@@ -238,9 +238,9 @@ const AvisImposition = () => {
         }
         let response = await axios.get(url)
         setTotal(response.data.total)
-        setData(id == undefined ? response.data.data : [response.data.data])
+        setData(id === undefined ? response.data.data : [response.data.data])
         setLoading(false)
-    }
+    }, [currentPage, id, itemsPerPage, selectedFkt])
 
     const handlePageChange = (event, newPage) => {
         setCurrentPage(newPage);
@@ -259,7 +259,7 @@ const AvisImposition = () => {
 
     useEffect(() => {
         fetch()
-    }, [selectedFkt, itemsPerPage, currentPage])
+    }, [fetch])
 
     return (
         <div printed={printed}>
@@ -272,7 +272,7 @@ const AvisImposition = () => {
                     mb={5}
                 >
                     {
-                        id == undefined ?
+                        id === undefined ?
 
                             <Box>
                                 <TextField
@@ -301,7 +301,7 @@ const AvisImposition = () => {
                                 </TextField>
                             </Box> : <Box />
                     }
-                    <button onClick={print} className='btn btn-success'><i className='fa fa-print'></i> Imprimer</button>
+                    <button onClick={print} className='btn btn-primary'><i className='fa fa-print'></i> Imprimer</button>
                 </Box>
             }
             <div className={!printed ? "container" : ""}>

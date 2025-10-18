@@ -5,7 +5,7 @@ const Detail = ({ data }) => {
     const keys = { "typequart": "Type quartier", "etatmur": "Etat du mur", "access": "Accéssibilité" }
     const logements = data.map((logement) => {
         let details = []
-        if (logement.details != undefined) {
+        if (logement.details !== undefined) {
             logement.details.forEach((detail) => {
                 details.push(detail)
             })

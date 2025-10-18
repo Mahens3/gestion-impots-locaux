@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'data/api/axios'
@@ -25,8 +25,8 @@ const AboutConstructionOut = () => {
 
     const [showDetail, setShowDetail] = useState(false)
 
-    const getConstruction = async (numcons = null) => {
-        var response = await axios.get("/api/construction/" + (numcons == null ? id : numcons))
+    const getConstruction = useCallback(async (numcons = null) => {
+        var response = await axios.get("/api/construction/" + (numcons === null ? id : numcons))
         let data = {
             "title": "Fokontany",
             "type": "select",
@@ -41,7 +41,7 @@ const AboutConstructionOut = () => {
         }))
         response.data = response.data.construction
 
-        if (response.data.proprietaire == null) {
+        if (response.data.proprietaire === null) {
             response.data.proprietaire = {}
             Object.keys(typeproprietaire).forEach((value) => {
                 response.data.proprietaire[value] = ""
@@ -49,13 +49,13 @@ const AboutConstructionOut = () => {
             response.data.proprietaire["numcons"] = response.data.numcons
         }
 
-        if (response.data.logements == null) {
+        if (response.data.logements === null) {
             response.data.logements = []
         }
 
         let logement = {}
         Object.keys(typelogement).forEach((value) => {
-            if (typelogement[value].type == "field" || typelogement[value].type == "checkbox") {
+            if (typelogement[value].type === "field" || typelogement[value].type === "checkbox") {
                 logement[value] = ""
             }
             else {
@@ -66,21 +66,21 @@ const AboutConstructionOut = () => {
         response.data.logements.push(logement)
         response.data.logs.push(logement)
         response.data.logs.map((item) => {
-            if (item.confort == null) {
+            if (item.confort === null) {
                 item.confort = ""
             }
             return item
         })
 
-        response.data.logements = response.data.logements.filter((logement) => logement != null)
+        response.data.logements = response.data.logements.filter((logement) => logement !== null)
         setConstruction(response.data)
         setLoading(false)
 
-    }
+    }, [id])
 
     useEffect(() => {
         getConstruction()
-    }, [id])
+    }, [getConstruction])
 
     return (
         <>
@@ -93,7 +93,7 @@ const AboutConstructionOut = () => {
                 {loading ? <Spinner /> :
                     <Box>
                         {
-                            construction.numcons != undefined &&
+                            construction.numcons !== undefined &&
                             <Box
                                 display="flex"
                                 justifyContent="space-between"
@@ -103,7 +103,7 @@ const AboutConstructionOut = () => {
                             >
                                 <Box>
                                     <Box>
-                                        <Typography variant='h5'>IFPB: {construction.impot != null && formatter(construction.impot) + " Ariary"} </Typography> <Typography>ID: {construction.numcons}</Typography>
+                                        <Typography variant='h5'>IFPB: {construction.impot !== null && formatter(construction.impot) + " Ariary"} </Typography> <Typography>ID: {construction.numcons}</Typography>
                                     </Box>
                                 </Box>
                                 <img style={{ marginTop: "10px", width: "300px", height: "280px", objectFit: "fill", borderRadius: 5, marginRight: 25, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)" }} src={`${apiUrl}/api/image/${construction.image}`} alt="" />
@@ -111,7 +111,7 @@ const AboutConstructionOut = () => {
                             </Box>
                         }
                         {
-                            construction.numcons != undefined &&
+                            construction.numcons !== undefined &&
                             <Box
                                 display="flex"
                                 justifyContent="space-between"
@@ -134,12 +134,12 @@ const AboutConstructionOut = () => {
                         }
                         <Grid container spacing={2}>
                             {
-                                showDetail ? (construction != null && <>
+                                showDetail ? (construction !== null && <>
 
                                     <Detail data={construction.logements} />
 
                                 </>) :
-                                    construction != null &&
+                                    construction !== null &&
                                     <Grid item xs={12} sm={12} lg={12} md={12}>
                                         <CardItem
                                             data={construction}
@@ -150,7 +150,7 @@ const AboutConstructionOut = () => {
                                     </Grid>
                             }
                             {
-                                construction.numcons != undefined && !showDetail && <>
+                                construction.numcons !== undefined && !showDetail && <>
 
                                     <Grid item xs={12} sm={12} lg={12} md={12}>
                                         <CardItem
