@@ -1,5 +1,9 @@
-import ConstructionService from "domain/services/constructionService";
 import { useCallback, useEffect, useState } from "react";
+import ConstructionService from "domain/services/constructionService";
+<<<<<<< HEAD
+import { useCallback, useEffect, useState } from "react";
+=======
+>>>>>>> 58c8b0e094660a7eb60ea8c2679690f43c9228d4
 
 function useFindConstruction(page, search) {
   const [montant, setMontant] = useState(0);
@@ -29,7 +33,11 @@ function useFindConstruction(page, search) {
 
   useEffect(() => {
     refetch();
+<<<<<<< HEAD
   }, [refetch]);
+=======
+  }, []);
+>>>>>>> 58c8b0e094660a7eb60ea8c2679690f43c9228d4
 
   return { isLoading, montant, constructions, total, refetch };
 }

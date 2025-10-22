@@ -34,11 +34,14 @@ const CardItem = ({ data }) => {
             )}
             <CardMedia
                 component="img"
-                height={imageLoading ? "0" : "140"}
-                src={`${apiUrl}/api/image/${data.image}`}
-                onLoad={() => setImageLoading(false)}
+                height="140"
+                src={data.image ? `${apiUrl}/api/image/${data.image}` : "https://placehold.co/400"}
                 onClick={() => {
                     navigate("/admin/construction/" + data.numcons);
+                }}
+                onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/400";
                 }}
             />
             <CardContent>
@@ -84,13 +87,15 @@ const CardItem = ({ data }) => {
                 <Box
                     sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        flexDirection: "column",
                     }}>
-                    <Typography
-                        sx={{
-                            fontSize: "0.8rem"
-                        }}
-                    >Payé: {formatter(data.paye)} Ar</Typography>
+                    {data.paye > 0 && (
+                        <Typography
+                            sx={{
+                                fontSize: "0.8rem"
+                            }}
+                        >Payé: {formatter(data.paye)} Ar</Typography>
+                    )}
                     <Typography
                         sx={{
                             fontSize: "0.8rem"

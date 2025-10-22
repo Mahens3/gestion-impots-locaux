@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Construction;
+use App\Models\Fokontany;
+use App\Models\Logement;
+use App\Models\Proprietaire;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UtilController extends Controller
 {
@@ -66,36 +72,6 @@ class UtilController extends Controller
 */
 
 
-public function findByNumcons($array)
-{
-    set_time_limit(100000000);
-    $array = json_decode($array);
-    $constructions = Construction::with("proprietaire", "logements", "ifpb", "personnes", "fokontany");
-    foreach ($array as $key) {
-        $constructions->orWhere("numcons", $key);
-    }
-    $constructions = $this->treat($constructions->get());
-    return response()->json($constructions);
-}
-
-public function adding(Request $request){
-    set_time_limit(9999999999999);
-    $constructions = Construction::where("typecons", "Imposable")
-    ->with("proprietaire", "fokontany")
-    ->where("idfoko", 3)->get();
-
-    foreach($constructions as $construction){
-        $surface = 1;
-        $surface_array = explode(".", strval($construction->surface));
-        foreach($surface_array as $surf){
-            $surface*=intval($surf);
-        }
-        DB::table("construction")->where("numcons", $construction->numcons)->update([
-            "surface" => $surface
-        ]);
-    }
-
-
     public function findByNumcons($array)
     {
         set_time_limit(100000000);
@@ -107,6 +83,26 @@ public function adding(Request $request){
         $constructions = $this->treat($constructions->get());
         return response()->json($constructions);
     }
+
+    public function adding(Request $request){
+        set_time_limit(9999999999999);
+        $constructions = Construction::where("typecons", "Imposable")
+        ->with("proprietaire", "fokontany")
+        ->where("idfoko", 3)->get();
+
+        foreach($constructions as $construction){
+            $surface = 1;
+            $surface_array = explode(".", strval($construction->surface));
+            foreach($surface_array as $surf){
+                $surface*=intval($surf);
+            }
+            DB::table("construction")->where("numcons", $construction->numcons)->update([
+                "surface" => $surface
+            ]);
+        }
+    }
+
+
 
     public function addProprietaire($data)
     {
@@ -351,141 +347,142 @@ public function adding(Request $request){
 
         return $response;
     }
-}
-public function total(){
-    $fokontany = Fokontany::get();
-    $mydata = [];
-    foreach($fokontany as $foko){
-        $constructions = Construction::where("typecons", "Imposable")
-        ->with("logements")->where("idfoko", $foko->id)->get();
-        $sum = 0;
-        $constructions = $this->treat($constructions, false);
-        foreach($constructions as $construction){
-            $sum+=$construction->impot;
-        }
-
-        $mydata[] = [
-            $foko->nomfokontany,
-            $sum,
-            count($constructions)
-        ];
-    }
-
-    $csv = fopen("recap.csv", "w");
-    fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
-    foreach ($mydata as $row) {
-        fputcsv($csv, $row, ";");
-    }
-    fclose($csv);
-    return $mydata;   
-}
-
-
-public function correction(){
-    set_time_limit(999999999999999);
-    $constructions = Construction::with("logements","fokontany","proprietaire")->where("typecons","Imposable")
-
-    ->get();
-    $dataniveau = ["Rez de chaussée", "1e étage", "2e étage", "3e étage", "4e étage", "5e étage"];
-    $dataconfort = ["Garage", "Ecran plat", "Wifi", "Parabole", "WC interne", "Douche interne", "Salle d'eau", "Eau", "Electricité", "Cuisine interne", "Evacuation des eaux usées"];
-    
-    $u=0;
-    for($i=0;$i<count($constructions); $i++){
-        $newLogements = [];
-        $logements = $constructions[$i]->logements;
-        foreach ($logements as $logement) {
-            if( !isset($newLogements[$logement->niveau]) ){
-                $newLogements[$logement->niveau] = $logement->toArray();
-                $newLogements[$logement->niveau]["forCalcul"] = true;
-                $newLogements[$logement->niveau]["numlog"] = date("YmdHis".$u);
-                $u+=1;
+    public function total(){
+        $fokontany = Fokontany::get();
+        $mydata = [];
+        foreach($fokontany as $foko){
+            $constructions = Construction::where("typecons", "Imposable")
+            ->with("logements")->where("idfoko", $foko->id)->get();
+            $sum = 0;
+            $constructions = $this->treat($constructions, false);
+            foreach($constructions as $construction){
+                $sum+=$construction->impot;
             }
-            else{
-                $confort = $newLogements[$logement->niveau]["confort"];
-                $confort = $this->hasConfort($confort, $logement->confort, $constructions[$i]->typehab);
-                $newLogements[$logement->niveau]["confort"] = $confort;
+
+            $mydata[] = [
+                $foko->nomfokontany,
+                $sum,
+                count($constructions)
+            ];
+        }
+
+        $csv = fopen("recap.csv", "w");
+        fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+        foreach ($mydata as $row) {
+            fputcsv($csv, $row, ";");
+        }
+        fclose($csv);
+        return $mydata;   
+    }
+
+
+    public function correction(){
+        set_time_limit(999999999999999);
+        $constructions = Construction::with("logements","fokontany","proprietaire")->where("typecons","Imposable")
+
+        ->get();
+        $dataniveau = ["Rez de chaussée", "1e étage", "2e étage", "3e étage", "4e étage", "5e étage"];
+        $dataconfort = ["Garage", "Ecran plat", "Wifi", "Parabole", "WC interne", "Douche interne", "Salle d'eau", "Eau", "Electricité", "Cuisine interne", "Evacuation des eaux usées"];
+        
+        $u=0;
+        for($i=0;$i<count($constructions); $i++){
+            $newLogements = [];
+            $logements = $constructions[$i]->logements;
+            foreach ($logements as $logement) {
+                if( !isset($newLogements[$logement->niveau]) ){
+                    $newLogements[$logement->niveau] = $logement->toArray();
+                    $newLogements[$logement->niveau]["forCalcul"] = true;
+                    $newLogements[$logement->niveau]["numlog"] = date("YmdHis".$u);
+                    $u+=1;
+                }
+                else{
+                    $confort = $newLogements[$logement->niveau]["confort"];
+                    $confort = $this->hasConfort($confort, $logement->confort, $constructions[$i]->typehab);
+                    $newLogements[$logement->niveau]["confort"] = $confort;
+                }
+            }
+
+            $u+=1;
+
+            for($j=0; $j<$constructions[$i]->nbrniv; $j++){
+                $key = $dataniveau[$j];
+                if(!isset($newLogements[$key])){
+                    $newLogements[$key] = [
+                        'numlog' => date("YmdHis".$u.$j),
+                        'niveau' => $key,
+                        'statut' => "Familial",
+                        'typelog' => "Habitat",
+                        'stpp'=> 0,
+                        'numcons' => $constructions[$i]->numcons,
+                        'forCalcul' => true,
+                        'typeoccup' => "Propriétaire",
+                        'confort' => ""
+                    ];
+                    $u+=1;
+                }
+            }
+
+            $logs = [];
+            foreach ($newLogements as $key) {
+                $logs[] = $key;
+            }
+            foreach ($logs as $log) {
+                Logement::create($log);
             }
         }
 
-        $u+=1;
+        return "success";
+    }
+    public function hasConfort($value1, $value2, $typehab){
+        $array1 = array_map("trim",explode(",", $value1));
+        $array2 = array_map("trim", explode(",", $value2));
 
-        for($j=0; $j<$constructions[$i]->nbrniv; $j++){
-            $key = $dataniveau[$j];
-            if(!isset($newLogements[$key])){
-                $newLogements[$key] = [
-                    'numlog' => date("YmdHis".$u.$j),
-                    'niveau' => $key,
-                    'statut' => "Familial",
-                    'typelog' => "Habitat",
-                    'stpp'=> 0,
-                    'numcons' => $constructions[$i]->numcons,
-                    'forCalcul' => true,
-                    'typeoccup' => "Propriétaire",
-                    'confort' => ""
-                ];
-                $u+=1;
+        $merge = array_merge($array1, $array2);
+        $merge = array_unique($merge);
+
+        if($typehab != "Haut standing"){
+            $elementToRemove = "Cuisine interne";
+            $merge = array_diff($merge, array($elementToRemove));
+        }
+
+        return implode(", ", $merge);
+    }  
+    
+    public function createCsvFile()
+    {
+        set_time_limit(100000000000);
+        $constructions = DB::table("reste")->get();
+
+        //dd($constructions);
+        $data = $this->getData($constructions);
+        $csv = fopen("reste.csv", "w");
+        fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+        foreach ($data as $row) {
+            fputcsv($csv, $row, ";");
+        }
+        fclose($csv);
+    }
+
+
+    public function correctionLog(){
+        set_time_limit(999999999999999);
+        $dataniveau = ["","Rez de chaussée", "1e étage", "2e étage", "3e étage", "4e étage", "5e étage"];
+        
+        $logements = Logement::with("construction.fokontany")->whereHas("construction", function($query){
+            $query->whereRaw("typecons=?", ["Imposable"]);
+        })->get();
+        
+        foreach($logements as $logement){
+            $index = array_search($logement->niveau, $dataniveau);
+            if($logement->construction->nbrniv < $index){
+                dd("yes");
+                /**
+                DB::table("logement")->where("numlog", $logement->numlog)->update([
+                    "niveau" => $dataniveau[$index - 1]
+                ]);
+                */
             }
         }
-
-        $logs = [];
-        foreach ($newLogements as $key) {
-            $logs[] = $key;
-        }
-        foreach ($logs as $log) {
-            Logement::create($log);
-        }
     }
-
-    return "success";
-}
-public function hasConfort($value1, $value2, $typehab){
-    $array1 = array_map("trim",explode(",", $value1));
-    $array2 = array_map("trim", explode(",", $value2));
-
-    $merge = array_merge($array1, $array2);
-    $merge = array_unique($merge);
-
-    if($typehab != "Haut standing"){
-        $elementToRemove = "Cuisine interne";
-        $merge = array_diff($merge, array($elementToRemove));
-    }
-
-    return implode(", ", $merge);
-}  public function createCsvFile()
-{
-    set_time_limit(100000000000);
-    $constructions = DB::table("reste")->get();
-
-    //dd($constructions);
-    $data = $this->getData($constructions);
-    $csv = fopen("reste.csv", "w");
-    fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
-    foreach ($data as $row) {
-        fputcsv($csv, $row, ";");
-    }
-    fclose($csv);
-}
-
-
-public function correctionLog(){
-    set_time_limit(999999999999999);
-    $dataniveau = ["","Rez de chaussée", "1e étage", "2e étage", "3e étage", "4e étage", "5e étage"];
-    
-    $logements = Logement::with("construction.fokontany")->whereHas("construction", function($query){
-        $query->whereRaw("typecons=?", ["Imposable"]);
-    })->get();
-    
-    foreach($logements as $logement){
-        $index = array_search($logement->niveau, $dataniveau);
-        if(($logement->construction->nbrniv) < $index){
-            dd("yes");
-            /**
-            DB::table("logement")->where("numlog", $logement->numlog)->update([
-                "niveau" => $dataniveau[$index - 1]
-            ]);
-             */
-        }
-    }
-}
 }
 

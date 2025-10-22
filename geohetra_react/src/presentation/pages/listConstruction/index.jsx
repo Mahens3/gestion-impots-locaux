@@ -60,22 +60,14 @@ const Construction = () => {
             }
             fetch()
         }
-    }, [search])
+
+        refetch();
+    }, [currentPage, refetch, search]);
 
     return (
         <>
-            <Box
-                p={4}
-                mb={10}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        pb: 4,
-                    }}
-                >
+            <Box p={4} mb={10}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 4 }}>
                     {
                         (search !== "" && constructions.length === 0) ?
                             <Box>Aucun resultat trouvé</Box> :

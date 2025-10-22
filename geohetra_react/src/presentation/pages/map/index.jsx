@@ -37,7 +37,7 @@ const Map = () => {
 
     const handleConstruction = () => {
         if (isDrawing) {
-            navigation("/construction/new/" + JSON.stringify(construction))
+            navigation("/admin/construction/new/" + JSON.stringify(construction))
         }
         setIsDrawing(!isDrawing)
     }
@@ -84,7 +84,7 @@ const Map = () => {
                 iconSize: [30, 30],
             })
             const marker = L.marker(value.position, { icon: customMarkerIcon })
-            
+
             const customPopup = `
                 <div class='d-flex'>
                     <div>
@@ -126,7 +126,7 @@ const Map = () => {
                         context.setSelectedFokontany(e.target.value)
                     }}
                 >
-                    {context.fokontanyList.map(
+                    {(context.fokontanyList ?? []).map(
                         (fokontany, key) =>
                             <option
                                 value={fokontany.id} key={key}>
@@ -160,7 +160,6 @@ const Map = () => {
                 />
 
                 <MapEvents />
-
                 {
                     isDrawing ?
                         <Polyline
