@@ -35,13 +35,17 @@ const CardItem = ({ data }) => {
             <CardMedia
                 component="img"
                 height="140"
-                src={data.image ? `${apiUrl}/api/image/${data.image}` : "https://placehold.co/400"}
+                src={data.image ? `${apiUrl}/api/image/${data.image}` : `${apiUrl}/api/image/default.jpg`}
                 onClick={() => {
                     navigate("/admin/construction/" + data.numcons);
                 }}
+                onLoad={() => {
+                    setImageLoading(false);
+                }}
                 onError={e => {
                     e.target.onerror = null;
-                    e.target.src = "https://placehold.co/400";
+                    e.target.src = `${apiUrl}/api/image/default.jpg`;
+                    setImageLoading(false);
                 }}
             />
             <CardContent>

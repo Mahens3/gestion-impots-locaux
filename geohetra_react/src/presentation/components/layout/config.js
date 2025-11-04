@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { SvgIcon } from '@mui/material';
 import { CreditScore, Dashboard, FilePresent, Home } from '@mui/icons-material';
 

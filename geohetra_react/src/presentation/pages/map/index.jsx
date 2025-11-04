@@ -15,7 +15,8 @@ import "presentation/assets/style/leaflet.css"
 import { MapContainer, Polygon, Polyline, TileLayer, useMapEvent } from "react-leaflet"
 import { Add, Close, Home, Reddit, Settings } from "@mui/icons-material"
 
-import baseUrl from "core/basename"
+// import baseUrl from "core/basename"
+import apiUrl from "core/api"
 import useFokontany from "presentation/hooks/useFokontany"
 import useConstructionList from "presentation/hooks/useConstructionList"
 
@@ -88,10 +89,10 @@ const Map = () => {
             const customPopup = `
                 <div class='d-flex'>
                     <div>
-                        <img class='img-marker' src='${baseUrl}/api/image/${value.image}' />
+                        <img class='img-marker' src='${value.image ? `${apiUrl}/api/image/${value.image}` : `${apiUrl}/api/image/default.jpg`}' />
                     </div>
 
-                    <div >
+                    <div>
                         <span class='ref' >ID: ${value.numcons}</span><br>
                         <span class='fw-bold' >${value.proprietaire}</span><br>
                         <span class='fw-bold' >${value.surface} m²</span><br>

@@ -141,7 +141,7 @@ const Form = ({ currentPage, isLoading, handleSearch}) => {
                             fullWidth
                             size="large"
                             sx={{ mt: 3 }}
-                            color='success'
+                            color='primary'
                             type="submit"
                             disabled={isLoading}
                             variant="contained"

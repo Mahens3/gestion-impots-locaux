@@ -54,7 +54,7 @@ const Header = () => {
                             sx={{ textTransform: "none" }}
                             variant="contained"
                             size="medium"
-                            color="success" >
+                            color="primary" >
                             Se connecter
                         </Button>
                     </Box>
