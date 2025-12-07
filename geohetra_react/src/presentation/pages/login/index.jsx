@@ -37,9 +37,6 @@ const LoginPage = () => {
     },
   });
 
-  console.log("Formik data:", formik.values);
-  console.log("Formik errors:", formik.errors);
-
   const { isLoading, handleLogin } = useAuth(formik.values, formik);
 
   const [show, setShow] = useState(false);

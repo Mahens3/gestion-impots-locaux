@@ -1,6 +1,6 @@
 {
   "name": "geohetra",
-  "homepage": ".",
+  "homepage": "https://gestion-impots-locaux-msq8.vercel.app",
   "version": "0.1.0",
   "private": false,
   "dependencies": {
