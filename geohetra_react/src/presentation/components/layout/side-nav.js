@@ -1,125 +1,251 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "presentation/assets/images/logo.png";
-
 import PropTypes from 'prop-types';
 import {
   Box,
   Button,
   Divider,
   Drawer,
-  Typography
+  Typography,
+  alpha
 } from '@mui/material';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
-
+import MapIcon from '@mui/icons-material/Map';
 
 const SideNav = (props) => {
   const { open, onClose } = props;
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
-  const [lgUp, setLgUp] = useState(window.matchMedia('(min-width: 1280px)').matches);
+  const [lgUp, setLgUp] = useState(window.matchMedia('(min-width: 1200px)').matches);
 
   useEffect(() => {
     const handleResize = () => {
-      setLgUp(window.matchMedia('(min-width: 1280px)').matches);
+      setLgUp(window.matchMedia('(min-width: 1200px)').matches);
     };
 
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
   const content = (
-  
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Box sx={{ p: 3 }}>
-          <Box
-            sx={{
-              alignItems: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
-              borderRadius: 1,
-              cursor: 'pointer',
-              display: 'flex',
-              justifyContent: 'flex-start',
-              mt: 2,
-              p: '12px'
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        background: 'linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%)',
+        overflowY: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '6px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: alpha('#ffffff', 0.2),
+          borderRadius: '3px',
+          '&:hover': {
+            background: alpha('#ffffff', 0.3),
+          }
+        }
+      }}
+    >
+      {/* Header avec logo - Responsive */}
+      <Box sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            backgroundColor: alpha('#ffffff', 0.1),
+            backdropFilter: 'blur(10px)',
+            borderRadius: 2,
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'flex-start',
+            p: { xs: 1.5, sm: 2 },
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: alpha('#ffffff', 0.15),
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            }
+          }}
+        >
+          <Link 
+            to="/" 
+            style={{ 
+              display: 'flex', 
+              height: 44, 
+              width: 44, 
+              marginRight: 10,
+              borderRadius: '8px',
+              overflow: 'hidden',
+              backgroundColor: '#ffffff',
+              padding: '4px',
+              flexShrink: 0
             }}
           >
-            <Link to="/" style={{ display: 'flex', height: 50, width: 50, marginRight: 10 }}>
-              <img src={logo} alt='logo' />
-            </Link>
-            <div>
-              <Typography color="inherit" variant="h6">
-                Geohetra
-              </Typography>
-              <Typography color="neutral.300" style={{ fontSize: "0.8rem" }}>
-                Geomatique et Impôt
-              </Typography>
-            </div>
+            <img 
+              src={logo} 
+              alt='logo Geohetra' 
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </Link>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography 
+              color="inherit" 
+              variant="h6"
+              sx={{ 
+                fontWeight: 700,
+                fontSize: { xs: '1rem', sm: '1.05rem', md: '1.1rem' },
+                letterSpacing: '0.5px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              Geohetra
+            </Typography>
+            <Typography 
+              sx={{ 
+                fontSize: { xs: '0.7rem', sm: '0.72rem', md: '0.75rem' },
+                color: alpha('#ffffff', 0.8),
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              Géomatique et Impôt
+            </Typography>
           </Box>
         </Box>
-        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
-        <Box
-          component="nav"
+      </Box>
+
+      <Divider sx={{ borderColor: alpha('#ffffff', 0.15), mx: 2 }} />
+
+      {/* Navigation - Responsive */}
+      <Box
+        component="nav"
+        sx={{
+          flex: 1,
+          px: { xs: 1.5, sm: 2 },
+          py: { xs: 1.5, sm: 2 },
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: alpha('#ffffff', 0.2),
+            borderRadius: '3px',
+            '&:hover': {
+              background: alpha('#ffffff', 0.3),
+            }
+          }
+        }}
+      >
+        <Typography
+          variant="overline"
           sx={{
-            listStyle: "none",
-            px: 3
+            color: alpha('#ffffff', 0.6),
+            fontSize: { xs: '0.65rem', sm: '0.7rem' },
+            fontWeight: 700,
+            letterSpacing: '1.2px',
+            px: { xs: 1.5, sm: 2 },
+            mb: 1,
+            display: 'block'
           }}
         >
-          {items.map((item) => {
-            const active = item.path ? (location.pathname === item.path) : false;
-            return (
-              <SideNavItem
-                active={active}
-                disabled={item.disabled}
-                external={item.external}
-                icon={item.icon}
-                key={item.title}
-                path={item.path}
-                title={item.title}
-              />
-            );
-          })}
-        </Box>
-        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
+          MENU PRINCIPAL
+        </Typography>
+        {items.map((item) => {
+          const active = item.path ? (location.pathname === item.path) : false;
+          return (
+            <SideNavItem
+              active={active}
+              disabled={item.disabled}
+              external={item.external}
+              icon={item.icon}
+              key={item.title}
+              path={item.path}
+              title={item.title}
+            />
+          );
+        })}
+      </Box>
+
+      <Divider sx={{ borderColor: alpha('#ffffff', 0.15), mx: 2 }} />
+
+      {/* Call to action - Carte - Responsive */}
+      <Box
+        sx={{
+          p: { xs: 2, sm: 2.5, md: 3 },
+          mt: 'auto'
+        }}
+      >
         <Box
           sx={{
-            px: 2,
-            py: 3
+            backgroundColor: alpha('#ffffff', 0.08),
+            borderRadius: 2,
+            p: { xs: 2, sm: 2.5 },
+            border: `1px solid ${alpha('#ffffff', 0.12)}`
           }}
         >
-          <Typography color="neutral.100" variant="subtitle2">
-            Voulez-vous voir les constructions sur une carte ?
-          </Typography>
-          <Button
-            component="a"
-            fullWidth
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1.25, sm: 1.5 } }}>
+            <MapIcon sx={{ color: '#60a5fa', mr: 1, fontSize: { xs: 22, sm: 24 } }} />
+            <Typography 
+              color="#ffffff" 
+              variant="subtitle2"
+              sx={{ 
+                fontWeight: 600, 
+                fontSize: { xs: '0.85rem', sm: '0.9rem' }
+              }}
+            >
+              Visualisation
+            </Typography>
+          </Box>
+          <Typography 
             sx={{ 
-              mt: 2,
-              backgroundColor: '#1976d2',
-              '&:hover': {
-                backgroundColor: '#1565c0',
-              }
-            }}
-            target="_blank"
-            variant="contained"
-            onClick={() => {
-              navigate("/admin/map")
+              color: alpha('#ffffff', 0.8),
+              fontSize: { xs: '0.75rem', sm: '0.8rem' },
+              mb: { xs: 1.5, sm: 2 },
+              lineHeight: 1.5,
+              display: { xs: 'none', sm: 'block' }
             }}
           >
-            Carte
+            Explorez les constructions sur une carte interactive
+          </Typography>
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={<MapIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />}
+            onClick={() => navigate("/admin/map")}
+            sx={{ 
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              fontWeight: 600,
+              textTransform: 'none',
+              py: { xs: 1, sm: 1.2 },
+              fontSize: { xs: '0.85rem', sm: '0.9rem' },
+              borderRadius: 1.5,
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
+              '&:hover': {
+                backgroundColor: '#2563eb',
+                boxShadow: '0 6px 16px rgba(59, 130, 246, 0.5)',
+                transform: 'translateY(-2px)',
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Ouvrir la carte
           </Button>
         </Box>
       </Box>
+    </Box>
   );
 
   if (lgUp) {
@@ -129,9 +255,11 @@ const SideNav = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: '#1e3a8a', // Bleu foncé principal
+            backgroundColor: 'transparent',
             color: 'common.white',
-            width: 280
+            width: { xs: 260, sm: 280 },
+            border: 'none',
+            boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)'
           }
         }}
         variant="permanent"
@@ -148,9 +276,10 @@ const SideNav = (props) => {
       open={open}
       PaperProps={{
         sx: {
-          backgroundColor: '#2563eb', // Bleu moyen pour mobile
+          backgroundColor: 'transparent',
           color: 'common.white',
-          width: 280
+          width: { xs: 260, sm: 280 },
+          border: 'none'
         }
       }}
       sx={{ zIndex: (theme) => theme.zIndex.appBar + 100 }}
