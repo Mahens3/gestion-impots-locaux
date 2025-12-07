@@ -1,31 +1,26 @@
-import Login from 'presentation/pages/login';
-// import Coefficient from 'presentation/pages/coefficient';
-import Construction from 'presentation/pages/listConstruction';
-import AboutConstruction from 'presentation/pages/aboutConstruction';
-import AvisImposition from 'presentation/pages/avis';
-import Dashboard from 'presentation/pages/dashboard';
-import Suivi from 'presentation/pages/suivi';
-import Carte from 'presentation/pages/map';
-import { Routes, Route } from 'react-router-dom';
-import Main from 'presentation/main';
-import Home from 'presentation/pages/home';
-import AboutConstructionOut from 'presentation/pages/aboutConstructionOut';
-import Distribution from 'presentation/pages/adjoint/distribution';
+import { Routes, Route } from "react-router-dom";
 
+import Login from "presentation/pages/login";
+import Construction from "presentation/pages/listConstruction";
+import AboutConstruction from "presentation/pages/aboutConstruction";
+import AvisImposition from "presentation/pages/avis";
+import Dashboard from "presentation/pages/dashboard";
+import Suivi from "presentation/pages/suivi";
+import Carte from "presentation/pages/map";
+import Main from "presentation/main";
+import Home from "presentation/pages/home";
+import AboutConstructionOut from "presentation/pages/aboutConstructionOut";
+import Distribution from "presentation/pages/adjoint/distribution";
 
-export const OtherRoute = () => {
+export const AppRoutes = () => {
   return (
     <Routes>
+      {/* PUBLIC */}
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Home />} />
       <Route path="/about/:id" element={<AboutConstructionOut />} />
-    </Routes>
-  );
-};
 
-export const MainRoute = () => {
-  return (
-    <Routes>
+      {/* ADMIN */}
       <Route path="/admin" element={<Main />}>
         <Route path="distribution" element={<Distribution />} />
         <Route path="construction" element={<Construction />} />

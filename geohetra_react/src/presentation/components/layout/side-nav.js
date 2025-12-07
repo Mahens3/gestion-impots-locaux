@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import logo from "presentation/assets/images/logo.png";
 
 import PropTypes from 'prop-types';
 import {
@@ -54,7 +55,7 @@ const SideNav = (props) => {
             }}
           >
             <Link to="/" style={{ display: 'flex', height: 50, width: 50, marginRight: 10 }}>
-              <img src="/images/logo.png" alt='logo' />
+              <img src={logo} alt='logo' />
             </Link>
             <div>
               <Typography color="inherit" variant="h6">

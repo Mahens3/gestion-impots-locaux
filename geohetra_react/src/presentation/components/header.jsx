@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { alpha } from '@mui/material/styles';
+import logo from "presentation/assets/images/logo.png";
 
 const TOP_NAV_HEIGHT = 64;
 
@@ -39,8 +40,8 @@ const Header = () => {
                         direction="row"
                         justifyContent="space-between"
                     >
-                        <Link to="/" style={{ display: 'flex', height: 50, width: 50, marginRight: 5 }}>
-                            <img src="/images/logo.png" alt="logo" />
+                        <Link to="/" style={{ display: 'flex', height: 45, width: 45, marginRight: 5 }}>
+                            <img src={logo} alt="logo" />
                         </Link>
                         <Box>
                             <Typography color="inherit" variant="h5">

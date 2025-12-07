@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { Box, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 
-import img from "presentation/assets/images/2.jpg"
+import img from "presentation/assets/images/2.jpg";
+import logo from "presentation/assets/images/logo.png";
 
 
 export const Layout = (props) => {
@@ -47,7 +48,7 @@ export const Layout = (props) => {
                                 width: 32
                             }}
                         >
-                            <img src='/images/logo.png' alt='logo' />
+                            <img src={logo} alt='logo' />
                         </Box>
                     </Box>
                     {children}

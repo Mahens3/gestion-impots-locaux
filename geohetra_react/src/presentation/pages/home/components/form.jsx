@@ -128,7 +128,7 @@ const Form = ({ currentPage, isLoading, handleSearch}) => {
                                 >
                                     {
                                         fokontany?.map((value) => (
-                                            <option value={value.id}>
+                                            <option value={value.id} key={value.id}>
                                                 {value.nomfokontany}
                                             </option>
                                         ))
