@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "../../../data/api/axios";
 import { NavLink, useParams } from "react-router-dom";
 import convert from "../../helpers/convertisseur";
-import { Box, MenuItem, Pagination, TextField } from "@mui/material";
+import { Box, MenuItem, Pagination, TextField, Button } from "@mui/material";
 import { Spinner } from "../../components/loader";
 import useFokontany from "presentation/hooks/useFokontany";
 import apiUrl from "core/api";
+import { Print } from "@mui/icons-material";
+import { alpha } from "@mui/material/styles";
 
 const Tableau = ({ data, id, printed }) => {
   const [typehab, setTypehab] = useState({ HP: 0, HT: 0, AUP: 0, AUT: 0 });
@@ -39,13 +41,19 @@ const Tableau = ({ data, id, printed }) => {
     let type = { HP: 0, HT: 0, AUP: 0, AUT: 0 };
     data.logs.forEach((logement) => {
       if (logement.typelog === "Habitat") {
-        if (logement.typeoccup === "Propriétaire" || logement.typeoccup === "Occupant gratuit") {
+        if (
+          logement.typeoccup === "Propriétaire" ||
+          logement.typeoccup === "Occupant gratuit"
+        ) {
           type.HP += Math.round(logement.impotPerYearWithoutTaux);
         } else {
           type.HT += Math.round(logement.impotPerYearWithoutTaux);
         }
       } else {
-        if (logement.typeoccup === "Propriétaire" || logement.typeoccup === "Occupant gratuit") {
+        if (
+          logement.typeoccup === "Propriétaire" ||
+          logement.typeoccup === "Occupant gratuit"
+        ) {
           type.AUP += Math.round(logement.impotPerYearWithoutTaux);
         } else {
           type.AUT += Math.round(logement.impotPerYearWithoutTaux);
@@ -76,7 +84,9 @@ const Tableau = ({ data, id, printed }) => {
         <div className="header-avis">
           <div className="hcontent">
             <div>REPOBLIKAN'I MADAGASIKARA</div>
-            <div className="tarigetra">Fitiavana - Tanindrazana - Fandrosoana</div>
+            <div className="tarigetra">
+              Fitiavana - Tanindrazana - Fandrosoana
+            </div>
             <div className="bold">
               <span className="underline">AVIS D'IMPOSITION</span>
             </div>
@@ -86,13 +96,19 @@ const Tableau = ({ data, id, printed }) => {
           <div className="hcontent">
             {!printed && (
               <div>
-                <NavLink to={`/admin/construction/${data.numcons}`} className="btn btn-success">
+                <NavLink
+                  to={`/admin/construction/${data.numcons}`}
+                  className="btn btn-success"
+                >
                   Modifier
                 </NavLink>
               </div>
             )}
             <div>
-              N° <span className="bold">{data.numfiche} / {date.getFullYear()}</span>
+              N°{" "}
+              <span className="bold">
+                {data.numfiche} / {date.getFullYear()}
+              </span>
             </div>
             <div>
               Code : <span className="bold">206082101</span>
@@ -102,8 +118,9 @@ const Tableau = ({ data, id, printed }) => {
       </div>
 
       <div className="header-text">
-        Suivant les éléments de recensement en possession du Service, votre imposition au titre de l'année{" "}
-        <span className="bold">2023</span>, est arrêtée comme suit :
+        Suivant les éléments de recensement en possession du Service, votre
+        imposition au titre de l'année <span className="bold">2023</span>, est
+        arrêtée comme suit :
       </div>
 
       <div className="flex">
@@ -119,13 +136,17 @@ const Tableau = ({ data, id, printed }) => {
           <tbody>
             <tr>
               <td className="padded">
-                <div className="center">{data.article && data.article !== "null" ? data.article : ""}</div>
+                <div className="center">
+                  {data.article && data.article !== "null" ? data.article : ""}
+                </div>
                 <div className="center bold">{data.newarticle}</div>
               </td>
               <td className="padded">
                 <div>
                   {data.proprietaire
-                    ? data.proprietaire.nomprop + " " + (data.proprietaire.prenomprop || "")
+                    ? data.proprietaire.nomprop +
+                      " " +
+                      (data.proprietaire.prenomprop || "")
                     : "Propriétaire inconnu"}
                 </div>
                 <div>{adresse}</div>
@@ -164,10 +185,21 @@ const Tableau = ({ data, id, printed }) => {
 
       <div
         className="footer-text"
-        style={id !== 4 ? { width: "100%", marginBottom: 5, borderBottom: "2px dashed black" } : {}}
+        style={
+          id !== 4
+            ? {
+                width: "100%",
+                marginBottom: 5,
+                borderBottom: "2px dashed black",
+              }
+            : {}
+        }
       >
         <div>
-          Arrêté le présent avis d'imposition à la somme de : <span style={{ fontWeight: "bolder" }}>{convert(data.impot)} ariary</span>
+          Arrêté le présent avis d'imposition à la somme de :{" "}
+          <span style={{ fontWeight: "bolder" }}>
+            {convert(data.impot)} ariary
+          </span>
         </div>
         <div>Date de mise en recouvrement :</div>
         <div style={{ height: 8 }}></div>
@@ -261,9 +293,33 @@ const AvisImposition = () => {
           ) : (
             <Box />
           )}
-          <button onClick={print} className="btn btn-primary">
-            <i className="fa fa-print"></i> Imprimer
-          </button>
+
+          <Button
+            variant="contained"
+            startIcon={<Print />}
+            onClick={print}
+            sx={{
+              bgcolor: "#1e40af",
+              color: "#ffffff",
+              fontWeight: 600,
+              textTransform: "none",
+              px: { xs: 3, sm: 4 },
+              py: { xs: 1.25, sm: 1.5 },
+              borderRadius: 1.5,
+              fontSize: { xs: "0.9rem", sm: "0.95rem" },
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              boxShadow: `0 4px 12px ${alpha("#1e40af", 0.3)}`,
+              "&:hover": {
+                bgcolor: "#1e3a8a",
+                boxShadow: `0 6px 16px ${alpha("#1e40af", 0.4)}`,
+                transform: "translateY(-2px)",
+              },
+              transition: "all 0.3s ease",
+            }}
+          >
+            Imprimer
+          </Button>
         </Box>
       )}
 
@@ -279,14 +335,23 @@ const AvisImposition = () => {
                 key={groupIndex}
                 style={
                   !printed
-                    ? { boxShadow: "0 0 5px rgba(159, 159, 159, 0.3)", backgroundColor: "white", padding: "20px" }
+                    ? {
+                        boxShadow: "0 0 5px rgba(159, 159, 159, 0.3)",
+                        backgroundColor: "white",
+                        padding: "20px",
+                      }
                     : { padding: 0, boxShadow: "none" }
                 }
               >
                 {data
                   .slice(groupIndex * 5, groupIndex * 5 + 5)
                   .map((value, index) => (
-                    <Tableau key={`${groupIndex}-${index}`} printed={printed} data={value} id={index} />
+                    <Tableau
+                      key={`${groupIndex}-${index}`}
+                      printed={printed}
+                      data={value}
+                      id={index}
+                    />
                   ))}
               </div>
             ))
