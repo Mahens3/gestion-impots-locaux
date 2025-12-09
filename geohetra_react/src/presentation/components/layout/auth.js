@@ -81,7 +81,7 @@ export const Layout = (props) => {
                             Bienvenue au{' '}
                             <Box
                                 component="a"
-                                sx={{ color: '#15B79E' }}
+                                sx={{ color: '#1e40af' }}
                                 target="_blank"
                             >
                                 Geohetra
