@@ -13,14 +13,14 @@ class Utils {
           subtitle: const Text("Envoi terminé"),
           autoDismiss: true,
           duration: const Duration(seconds: 3),
-          background: Colors.green);
+          background: const Color(0xFF1E40AF));
 
   static void showEstablished(
           BuildContext context, String message, bool dismissed) =>
       showSimpleNotification(
-          Row(
+          const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Text("Notification"),
                 SizedBox(
                   width: 12,
@@ -33,5 +33,5 @@ class Utils {
               ]),
           subtitle: Text(message),
           autoDismiss: dismissed,
-          background: Colors.green);
+          background: const Color(0xFF1E40AF));
 }

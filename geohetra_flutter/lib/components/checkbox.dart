@@ -65,7 +65,7 @@ class _CheckBoxesState extends State<CheckBoxes> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Checkbox(
-                activeColor: Colors.green,
+                activeColor: const Color(0xFF1E40AF),
                 value: all,
                 onChanged: ((value) {
                   setState(() {
@@ -91,7 +91,7 @@ class _CheckBoxesState extends State<CheckBoxes> {
     for (var i = 0; i < options.length; i++) {
       listCheckBox.add(CheckboxListTile(
         value: checked[options[i]],
-        activeColor: Colors.green,
+        activeColor: const Color(0xFF1E40AF),
         onChanged: (value) {
           var newChecked = checked;
           newChecked[options[i]] = value;

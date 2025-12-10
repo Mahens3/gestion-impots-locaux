@@ -34,7 +34,7 @@ Container personneContainer(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: Colors.green, borderRadius: BorderRadius.circular(20)),
+                  color: const Color(0xFF1E40AF), borderRadius: BorderRadius.circular(20)),
               child: Text(
                 index.toString(),
                 style: const TextStyle(color: Colors.white),

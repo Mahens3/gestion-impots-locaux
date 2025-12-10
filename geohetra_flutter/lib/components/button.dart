@@ -9,7 +9,7 @@ import 'package:latlong2/latlong.dart';
 Container saveButton(Function? handleChange, {bool? loading}) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.blue,
+    backgroundColor: const Color(0xFF1E40AF),
     padding: const EdgeInsets.symmetric(horizontal: 16),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -65,7 +65,7 @@ InkWell newConstruction(
             color: Colors.white,
           ),
           decoration: BoxDecoration(
-              color: Colors.blue,
+              color: const Color(0xFF1E40AF),
               borderRadius: BorderRadius.circular(25),
               boxShadow: const [
                 BoxShadow(
@@ -89,7 +89,7 @@ InkWell showTerrain(BuildContext context, Function fonction, bool show) {
             color: Colors.white,
           ),
           decoration: BoxDecoration(
-              color: show ? Colors.blue : Colors.grey,
+              color: show ? const Color(0xFF1E40AF) : Colors.grey,
               borderRadius: BorderRadius.circular(25),
               boxShadow: const [
                 BoxShadow(
@@ -118,7 +118,7 @@ Widget buttonEditLog(
     Logement? logement, int id, Function refresh, BuildContext context) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.blue,
+    backgroundColor: const Color(0xFF1E40AF),
     padding: const EdgeInsets.symmetric(horizontal: 13),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -137,9 +137,9 @@ Widget buttonEditLog(
                   ));
           Navigator.of(context).push(route);
         },
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Icon(
               Icons.edit,
               size: 13,
@@ -154,7 +154,7 @@ Widget buttonEditPers(
     Personne? personne, int id, Function refresh, BuildContext context) {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    backgroundColor: Colors.blue,
+    backgroundColor: const Color(0xFF1E40AF),
     padding: const EdgeInsets.symmetric(horizontal: 13),
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -173,9 +173,9 @@ Widget buttonEditPers(
                   ));
           Navigator.of(context).push(route);
         },
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Icon(
               Icons.edit,
               size: 13,

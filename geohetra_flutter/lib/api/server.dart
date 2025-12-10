@@ -62,60 +62,6 @@ class HttpServer {
     return request;
   }
 
-  // Envoi des données au serveur distant
-
-  // Future send() async {
-  //   var baseUrl = await getServer();
-  //   List<Map<String, Object?>> proprietaires = await DB.instance.queryBuilder(
-  //       "SELECT * FROM proprietaire WHERE datetimes>'" +
-  //           date["proprietaire"].toString() +
-  //           "'");
-  //   List<Map<String, Object?>> ifpb = await DB.instance.queryBuilder(
-  //       "SELECT * FROM ifpb WHERE datetimes>'" + date["ifpb"].toString() + "'");
-
-  //   dynamic idagt =
-  //       await DB.instance.queryBuilder("SELECT idagt FROM user WHERE active=1");
-  //   idagt = idagt.first['idagt'];
-
-  //   List<Map<String, Object?>> constructions = await DB.instance.queryBuilder(
-  //       "SELECT * FROM construction WHERE datetimes>'" +
-  //           date["construction"].toString() +
-  //           "' AND idagt=" +
-  //           idagt.toString());
-
-  //   List<Map<String, Object?>> logements = await DB.instance.queryBuilder(
-  //       "SELECT l.*, c.numcons FROM logement l, construction c WHERE l.idcons=c.id AND l.datetimes>'" +
-  //           date["logement"].toString() +
-  //           "'");
-
-  //   List<Map<String, Object?>> personnes = await DB.instance.queryBuilder(
-  //       "SELECT c.numcons, p.* FROM personne p, construction c WHERE c.id=p.idcons AND p.datetimes>'" +
-  //           date["personne"].toString() +
-  //           "'");
-
-  //   var request =
-  //       http.MultipartRequest('POST', Uri.parse(baseUrl + "/api/remote"));
-
-  //   request.fields.addAll({
-  //     "constructions": json.encode(constructions),
-  //     "logements": json.encode(logements),
-  //     "proprietaires": json.encode(proprietaires),
-  //     "ifpbs": json.encode(ifpb),
-  //     "personne": json.encode(personnes),
-  //     "phone": phone
-  //   });
-
-  //   request = await addImage(constructions, request);
-
-  //   try {
-  //     await request.send().then((value) async {
-  //       //print(await value.stream.bytesToString());
-  //     });
-  //   } catch (e) {
-  //     return 0;
-  //   }
-  // }
-
   Future<void> send() async {
   var baseUrl = await getServer();
   print("🌐 Envoi des données vers : $baseUrl");

@@ -132,7 +132,7 @@ class _ImageCardState extends State<ImageCard> {
                     height: 150,
                     child: const Center(
                         child:
-                            CircularProgressIndicator(color: Colors.green))));
+                            CircularProgressIndicator(color: Color(0xFF1E40AF)))));
           }
         });
   }

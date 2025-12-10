@@ -57,7 +57,7 @@ class _ParametreState extends State<Parametre> {
   Container save() {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: Colors.blue,
+      backgroundColor: const Color(0xFF1E40AF),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -89,7 +89,7 @@ class _ParametreState extends State<Parametre> {
   Container resetbtn() {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: const Color.fromARGB(255, 10, 218, 6),
+      backgroundColor: const Color(0xFF1E40AF),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -113,7 +113,7 @@ class _ParametreState extends State<Parametre> {
         backgroundColor: color.AppColor.backgroundColor,
         appBar: AppBar(
           title: const Text("Parametre"),
-          backgroundColor: Colors.blue[900],
+          backgroundColor: const Color(0xFF1E40AF),
         ),
         body: Column(children: [
           Expanded(

@@ -175,16 +175,16 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
               height: 70,
               alignment: Alignment.center,
               width: screen.width,
-              color: Colors.blue,
+              color: const Color(0xFF1E40AF),
               child: TabBar(
                 isScrollable: true,
                 indicatorWeight: 4,
                 indicatorColor: Colors.white,
                 controller: tabController,
                 tabs: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.home,
                         size: 15,
@@ -195,9 +195,9 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
                       Tab(child: Text("Construction")),
                     ],
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.account_circle,
                         size: 15,
@@ -208,9 +208,9 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
                       Tab(child: Text("Propriétaire")),
                     ],
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.fact_check,
                         size: 15,
@@ -276,7 +276,7 @@ class _AboutState extends State<About> with TickerProviderStateMixin {
           ],
         )),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.blue,
+          backgroundColor: const Color(0xFF1E40AF),
           onPressed: () {
             MaterialPageRoute route;
             switch (tabController.index) {

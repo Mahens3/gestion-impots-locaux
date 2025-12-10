@@ -27,7 +27,7 @@ Widget myTextField(TextEditingController ctrl, String text,
               ]),
           child: TextField(
               focusNode: focusNode,
-              cursorColor: Colors.green,
+              cursorColor: const Color(0xFF1E40AF),
               controller: ctrl,
               keyboardType:
                   (number == false) ? TextInputType.text : TextInputType.number,
@@ -188,7 +188,7 @@ class _MyDropdownState extends State<MyDropdown> {
                         ]),
                     child: TextField(
                         controller: text,
-                        cursorColor: Colors.green,
+                        cursorColor: const Color(0xFF1E40AF),
                         onChanged: (value) {
                           change("Autre");
                           widget.setState(widget.label, value);
