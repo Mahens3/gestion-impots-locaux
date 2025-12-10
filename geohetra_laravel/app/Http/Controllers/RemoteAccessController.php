@@ -11,178 +11,183 @@ use Illuminate\Support\Facades\Log;
 class RemoteAccessController extends Controller
 {
 
+    /**
+     * Insère ou met à jour un propriétaire
+     */
     private function getProprietaire($proprietaire)
     {
-        if ($proprietaire != null) {
-            $data = [
-                'numprop' => $proprietaire->numprop,
-                'nomprop' => $proprietaire->nomprop,
-                'prenomprop' => $proprietaire->prenomprop,
-                'adress' => $proprietaire->adress,
-                'created_at' => $proprietaire->created_at,
-                'updated_at' => $proprietaire->updated_at,
-            ];
+        if (!$proprietaire) return null;
 
-            try {
-                DB::table('proprietaire')->insert($data);
-            } catch (\Illuminate\Database\QueryException $e) {
-                $errorCode = $e->errorInfo[1];
-                if ($errorCode === 1062) {
-                    DB::table('proprietaire')->where('numprop', $proprietaire->numprop)->update($data);
-                }
-            }
-            return $proprietaire->numprop;
-        } else {
-            return null;
-        }
+        $data = [
+            'numprop'     => $proprietaire->numprop,
+            'nomprop'     => $proprietaire->nomprop,
+            'prenomprop'  => $proprietaire->prenomprop,
+            'adress'      => $proprietaire->adress,
+            'created_at'  => $proprietaire->created_at,
+            'updated_at'  => $proprietaire->updated_at,
+        ];
+
+        DB::table('proprietaire')->updateOrInsert(
+            ['numprop' => $proprietaire->numprop],
+            $data
+        );
+
+        return $proprietaire->numprop;
     }
 
+    /**
+     * Dernière date de sync
+     */
     private function getSynchronisation()
     {
-        $created = DB::table('construction')->orderBy('created_at', 'DESC')->limit(1)->get();
-        $updated = DB::table('construction')->orderBy('updated_at', 'DESC')->limit(1)->get();
+        $created = DB::table('construction')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $updated = DB::table('construction')
+            ->orderByDesc('updated_at')
+            ->first();
 
         return [
-            'created' => count($created) > 0 ? $created[0]->created_at : null,
-            'updated' => count($updated) > 0 ? $updated[0]->updated_at : null,
+            'created' => $created->created_at ?? null,
+            'updated' => $updated->updated_at ?? null,
         ];
     }
 
+    /**
+     * Enregistre ou met à jour des logements
+     */
     private function setLogements($logements, $numcons)
     {
         foreach ($logements as $logement) {
+
             $datalog = [
-                'numlog' => $logement->numlog,
-                'nbrres' => $logement->nbrres,
-                'niveau' => $logement->niveau,
-                'statut' => $logement->statut,
-                'typelog' => $logement->typelog,
+                'numlog'    => $logement->numlog,
+                'nbrres'    => $logement->nbrres,
+                'niveau'    => $logement->niveau,
+                'statut'    => $logement->statut,
+                'typelog'   => $logement->typelog,
                 'typeoccup' => $logement->typeoccup,
-                'lien' => $logement->lien,
-                'numcons' => $numcons,
-                'stps' => $logement->stps,
-                'vve' => $logement->vve,
-                'lm' => $logement->lm,
-                'lien' => $logement->lien,
+                'lien'      => $logement->lien,
+                'numcons'   => $numcons,
+                'stps'      => $logement->stps,
+                'vve'       => $logement->vve,
+                'lm'        => $logement->lm,
                 'declarant' => $logement->declarant,
-                'confort' => $logement->confort,
-                'phone' => $logement->phone,
+                'confort'   => $logement->confort,
+                'phone'     => $logement->phone,
                 'created_at' => $logement->created_at,
                 'updated_at' => $logement->updated_at,
             ];
 
-            try {
-                DB::table('logement')->insert($datalog);
-            } catch (\Illuminate\Database\QueryException $e) {
-                $errorCode = $e->errorInfo[1];
-                if ($errorCode === 1062) {
-                    DB::table('logement')->where('numlog', $logement->numlog)->update($datalog);
-                }
-            }
+            DB::table('logement')->updateOrInsert(
+                ['numlog' => $logement->numlog],
+                $datalog
+            );
         }
     }
 
+    /**
+     * Récupère l'extension du fichier
+     */
     public function getFilename($file)
     {
-        $splitted = explode(".", $file);
-        return $splitted[count($splitted) - 1];
+        return pathinfo($file, PATHINFO_EXTENSION);
     }
+
+    /**
+     * Upload & synchronisation principale
+     */
     public function upload(Request $request)
     {
-        set_time_limit(9999999999);
+        set_time_limit(0);
 
         $phone = $request->phone;
-        Log::info("📱 Envoi des données pour : $phone");
+        Log::info("📱 Début synchronisation pour $phone");
 
-        $constructions = json_decode($request->constructions);
-
-        // Vérifier l'agent
-        $result = DB::table("agent")
+        /** Vérification agent */
+        $agent = DB::table("agent")
             ->where("phone", $request->phone)
             ->where("mdp", $request->mdp)
-            ->get();
+            ->first();
 
-        if (count($result) === 0) {
-            Log::warning("Agent non trouvé pour le téléphone : $phone");
+        if (!$agent) {
+            Log::warning("❌ Agent non trouvé pour : $phone");
             return ["user" => false];
         }
 
-        $agentId = $result[0]->id;
-        Log::info("Agent trouvé : ID $agentId");
+        Log::info("✔ Agent validé : ID = {$agent->id}");
 
+        // Récupération des constructions
+        $constructions = json_decode($request->constructions);
+
+        if (!$constructions) {
+            Log::error("❌ Format constructions invalide");
+            return ["error" => "Invalid JSON"];
+        }
+
+        /** Traiter chaque construction */
         foreach ($constructions as $construction) {
 
-            // Gestion sécurisée de l'image
-            $filename = property_exists($construction, 'image') && $construction->image != null
-                ? $this->getFilename($construction->image)
-                : null;
+            // ---------- IMAGE ----------
+            $filename = null;
+            if (!empty($construction->image)) {
+                $filename = $this->getFilename($construction->image);
 
-            try {
-                if ($filename && $request->file($construction->numcons) != null) {
-                    $image = $request->file($construction->numcons);
-                    $construction->image = $construction->numcons . "." . $filename;
-                    $image->move(public_path('images'), $construction->numcons . "." . $filename);
-                    Log::info("Image uploadée pour la construction " . $construction->numcons);
+                if ($request->file($construction->numcons)) {
+                    $file = $request->file($construction->numcons);
+                    $newName = "{$construction->numcons}.{$filename}";
+                    $file->move(public_path('images'), $newName);
+
+                    $construction->image = $newName;
+                    Log::info("✔ Image enregistrée : $newName");
                 }
-            } catch (Exception $e) {
-                Log::error("Erreur upload image pour " . $construction->numcons . " : " . $e->getMessage());
             }
 
-            // Préparer les données en sécurisant chaque propriété
+            // ---------- DATA ----------
             $data = [
-                'numcons' => $construction->numcons ?? '',
-                'mur' => $construction->mur ?? '',
-                'ossature' => $construction->ossature ?? '',
-                'adress' => $construction->adress ?? '',
-                'toiture' => $construction->toiture ?? '',
-                'fondation' => $construction->fondation ?? '',
-                'typehab' => $construction->typehab ?? '',
-                'etatmur' => $construction->etatmur ?? '',
-                'access' => $construction->access ?? '',
-                'wc' => $construction->wc ?? '',
-                'typecons' => $construction->typecons ?? '',
-                'nbrniv' => $construction->nbrniv ?? 0,
-                'anconst' => $construction->anconst ?? null,
-                'idagt' => $agentId,
-                'image' => $construction->image ?? null,
-                'typequart' => $construction->typequart ?? '',
+                'numcons'      => $construction->numcons,
+                'mur'          => $construction->mur ?? '',
+                'ossature'     => $construction->ossature ?? '',
+                'adress'       => $construction->adress ?? '',
+                'toiture'      => $construction->toiture ?? '',
+                'fondation'    => $construction->fondation ?? '',
+                'typehab'      => $construction->typehab ?? '',
+                'etatmur'      => $construction->etatmur ?? '',
+                'access'       => $construction->access ?? '',
+                'wc'           => $construction->wc ?? '',
+                'typecons'     => $construction->typecons ?? '',
+                'nbrniv'       => $construction->nbrniv ?? 0,
+                'anconst'      => $construction->anconst ?? null,
+                'idagt'        => $agent->id,
+                'image'        => $construction->image ?? null,
+                'typequart'    => $construction->typequart ?? '',
                 'boriboritany' => $construction->boriboritany ?? '',
-                'surface' => $construction->surface ?? 0,
-                'coord' => (isset($construction->lat) && isset($construction->lng)) ? $construction->lat . ', ' . $construction->lng : '',
-                'idfoko' => $construction->idfoko ?? null,
-                'article' => $construction->article ?? null,
-                'created_at' => $construction->created_at ?? now(),
-                'updated_at' => $construction->updated_at ?? now(),
-                'numprop' => $this->getProprietaire($construction->proprietaire ?? null),
+                'surface'      => $construction->surface ?? 0,
+                'coord'        => isset($construction->lat, $construction->lng)
+                    ? "{$construction->lat},{$construction->lng}"
+                    : '',
+                'idfoko'       => $construction->idfoko ?? null,
+                'article'      => $construction->article ?? null,
+                'created_at'   => $construction->created_at ?? now(),
+                'updated_at'   => $construction->updated_at ?? now(),
+                'numprop'      => $this->getProprietaire($construction->proprietaire ?? null),
             ];
 
-            // Insertion / mise à jour
-            try {
-                DB::table('construction')->insert($data);
-                Log::info("Construction insérée : " . $construction->numcons);
-            } catch (\Illuminate\Database\QueryException $e) {
-                $errorCode = $e->errorInfo[1];
-                if ($errorCode === 1062) { // Duplicate entry
-                    DB::table('construction')->where('numcons', $construction->numcons)->update($data);
-                    Log::info("Construction mise à jour : " . $construction->numcons);
-                } else {
-                    Log::error("Erreur DB pour " . $construction->numcons . " : " . $e->getMessage());
-                }
-            }
+            DB::table('construction')->updateOrInsert(
+                ['numcons' => $construction->numcons],
+                $data
+            );
 
-            // Gestion sécurisée des logements
-            try {
-                $logements = property_exists($construction, 'logements') && is_array($construction->logements)
-                    ? $construction->logements
-                    : [];
-                $this->setLogements($logements, $construction->numcons);
-                Log::info("Logements traités pour " . $construction->numcons);
-            } catch (Exception $e) {
-                Log::error("Erreur traitement logements pour " . $construction->numcons . " : " . $e->getMessage());
+            Log::info("✔ Construction synchronisée : {$construction->numcons}");
+
+            // ---------- LOGEMENTS ----------
+            if (!empty($construction->logements)) {
+                $this->setLogements($construction->logements, $construction->numcons);
             }
         }
 
-        Log::info("✅ Upload terminé pour l'agent ID $agentId");
+        Log::info("🎉 Synchronisation terminée pour l'agent {$agent->id}");
 
         return $this->getSynchronisation();
     }
