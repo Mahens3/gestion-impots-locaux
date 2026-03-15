@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http;
-//use Illuminate\Routing\Middleware\ThrottleRequests;
+// use Illuminate\Routing\Middleware\ThrottleRequests;
 
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -64,7 +64,7 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class . ':601', 
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'jwt.verify' => JwtMiddleware::class,
     ];
 }
