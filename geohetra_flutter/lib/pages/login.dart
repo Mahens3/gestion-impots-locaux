@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:geohetra/api/server.dart';
 import 'package:geohetra/database/database.dart';
@@ -10,7 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 class Login extends StatefulWidget {
   final bool logged;
   final Function handleLogged;
-  
+
   const Login({
     Key? key,
     required this.logged,
@@ -25,14 +26,14 @@ class _LoginState extends State<Login> {
   late TextEditingController user = TextEditingController();
   late TextEditingController password = TextEditingController();
   late TextEditingController ctrl = TextEditingController();
-  
+
   late bool authentificate = true;
   late bool errorPass = false;
   late bool errorPhone = false;
   late bool isLoading = false;
   late bool showPassword = false;
   late bool showModal = false;
-  
+
   late Map<String, dynamic> config = {};
 
   @override
@@ -40,7 +41,7 @@ class _LoginState extends State<Login> {
     super.initState();
     checkFkt();
     checkPermission();
-    
+
     Timer(const Duration(milliseconds: 2000), () {
       if (mounted) {
         setState(() {
@@ -99,7 +100,8 @@ class _LoginState extends State<Login> {
         var data = {
           "reset": true,
           // "server": "http://192.168.1.102:8000",
-          "server": "https://athletic-inspiration-production-c83e.up.railway.app",
+          // "server": "https://athletic-inspiration-production-c83e.up.railway.app",
+          "server": "https://geohetra-backend-2-0.onrender.com",
           "color": {"inachieve": 6, "achieve": 2, "voisin": 9}
         };
         await file.writeAsString(json.encode(data));
@@ -121,44 +123,45 @@ class _LoginState extends State<Login> {
     var file = File('${root.path}/settings.json');
     var cfg = config;
     cfg["server"] = ctrl.text;
-    
+
     await file.writeAsString(json.encode(cfg));
-    
+
     setState(() {
       config = cfg;
       showModal = false;
       isLoading = false;
       errorPhone = false;
     });
-    
+
     authentification();
   }
 
   void authentification() async {
     await handleParametreFile();
-    
+
     setState(() {
       isLoading = true;
       errorPhone = false;
       errorPass = false;
     });
 
-    var phone = await DB.instance.queryBuilder(
-        "SELECT * FROM user WHERE phone='${user.text}'");
-        
+    var phone = await DB.instance
+        .queryBuilder("SELECT * FROM user WHERE phone='${user.text}'");
+
     if (phone.isNotEmpty) {
       setState(() {
         errorPhone = false;
         isLoading = false;
       });
-      
+
       var result = await DB.instance.queryBuilder(
           "SELECT * FROM user WHERE phone='${user.text}' AND mdp='${password.text}'");
-          
+
       if (result.isNotEmpty) {
         await DB.instance.queryUpdate("UPDATE user SET active=1");
         if (mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil("/map", (route) => false);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil("/map", (route) => false);
         }
       } else {
         setState(() {
@@ -185,7 +188,7 @@ class _LoginState extends State<Login> {
         phone: user.text,
         password: password.text,
       );
-      
+
       setState(() {
         if (result["server"] == false) {
           errorPhone = true;
@@ -260,7 +263,8 @@ class _LoginState extends State<Login> {
                     labelText: "URL du serveur",
                     prefixIcon: Icon(Icons.dns, color: Color(0xFF1E40AF)),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
                 ),
               ),
@@ -282,7 +286,8 @@ class _LoginState extends State<Login> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Text(
@@ -389,8 +394,8 @@ class _LoginState extends State<Login> {
                                       color: Colors.grey[50],
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: errorPhone 
-                                            ? const Color(0xFFEF4444) 
+                                        color: errorPhone
+                                            ? const Color(0xFFEF4444)
                                             : Colors.grey[300]!,
                                         width: errorPhone ? 2 : 1,
                                       ),
@@ -410,12 +415,13 @@ class _LoginState extends State<Login> {
                                         ),
                                         prefixIcon: Icon(
                                           Icons.person_outline,
-                                          color: errorPhone 
+                                          color: errorPhone
                                               ? const Color(0xFFEF4444)
                                               : const Color(0xFF1E40AF),
                                         ),
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
                                           horizontal: 16,
                                           vertical: 16,
                                         ),
@@ -450,8 +456,8 @@ class _LoginState extends State<Login> {
                                       color: Colors.grey[50],
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: errorPass 
-                                            ? const Color(0xFFEF4444) 
+                                        color: errorPass
+                                            ? const Color(0xFFEF4444)
                                             : Colors.grey[300]!,
                                         width: errorPass ? 2 : 1,
                                       ),
@@ -471,7 +477,7 @@ class _LoginState extends State<Login> {
                                         ),
                                         prefixIcon: Icon(
                                           Icons.lock_outline,
-                                          color: errorPass 
+                                          color: errorPass
                                               ? const Color(0xFFEF4444)
                                               : const Color(0xFF1E40AF),
                                         ),
@@ -489,7 +495,8 @@ class _LoginState extends State<Login> {
                                           },
                                         ),
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
                                           horizontal: 16,
                                           vertical: 16,
                                         ),
@@ -520,16 +527,20 @@ class _LoginState extends State<Login> {
                                   const SizedBox(height: 32),
                                   // Login Button
                                   ElevatedButton(
-                                    onPressed: isLoading ? null : authentification,
+                                    onPressed:
+                                        isLoading ? null : authentification,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF1E40AF),
                                       foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
                                       elevation: 2,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      disabledBackgroundColor: const Color(0xFF1E40AF).withOpacity(0.6),
+                                      disabledBackgroundColor:
+                                          const Color(0xFF1E40AF)
+                                              .withOpacity(0.6),
                                     ),
                                     child: isLoading
                                         ? const SizedBox(
@@ -537,7 +548,8 @@ class _LoginState extends State<Login> {
                                             width: 20,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
                                                 Colors.white,
                                               ),
                                             ),
