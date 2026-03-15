@@ -1,6 +1,7 @@
+# Image PHP FPM
 FROM php:8.2-fpm
 
-# Installer les extensions système requises
+# Installer les extensions système nécessaires
 RUN apt-get update && apt-get install -y \
     libpng-dev libonig-dev libxml2-dev zip unzip git curl \
     && docker-php-ext-install pdo_mysql mbstring exif bcmath gd \
@@ -12,7 +13,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Dossier de travail
 WORKDIR /var/www/html
 
-# Copier les fichiers de dépendances en premier pour profiter du cache Docker
+# Copier les fichiers de dépendances et installer Composer
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
@@ -23,8 +24,12 @@ COPY . .
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Render passe le port à l'application via la variable d'environnement PORT
+# Copie du script d'entrée
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Port fourni par Render
 ENV PORT=8000
 
-# Démarrer l'application (le port est fourni par Render via $PORT)
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
+# Utiliser le script d'entrée comme commande
+CMD ["/entrypoint.sh"]
