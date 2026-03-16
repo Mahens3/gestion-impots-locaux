@@ -1,47 +1,23 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
-# Installer dépendances système + nginx
 RUN apt-get update && apt-get install -y \
-    nginx \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    && docker-php-ext-install pdo_mysql mbstring exif bcmath gd \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    git curl zip unzip libpng-dev \
+    && docker-php-ext-install pdo_mysql gd
 
-# Installer composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copier fichiers composer
-COPY composer.json composer.lock ./
+# IMPORTANT : copier tout le projet
+COPY . .
 
+# Installer les dépendances
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
 
-# Copier projet
-COPY . .
+EXPOSE 8000
 
-# Permissions Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-# Config nginx
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Script démarrage
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-EXPOSE 80
-
-CMD ["/entrypoint.sh"]
+CMD php artisan serve --host=0.0.0.0 --port=8000
