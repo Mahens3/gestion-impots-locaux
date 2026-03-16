@@ -8,16 +8,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# IMPORTANT : copier tout le projet
 COPY . .
 
-# Installer les dépendances
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
 
-EXPOSE 8000
-
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# On utilise la variable $PORT fournie par Railway
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
